@@ -1,8 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
 Route::get("/", function () {
     return Inertia::render("Home");
@@ -48,7 +48,7 @@ Route::post("/login", function () {
 Route::post("/quotes", function () {
     $token = session("auth_token");
 
-    // authentication fields are empty because the auth is provided by the token
+    // authentication fields must be empty because the auth is provided by the token
     // TODO get start date from user
     $request_body = [
         "provider" => [
