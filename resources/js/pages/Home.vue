@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import { PageProps } from '@/types/inertia';
 
@@ -10,10 +10,6 @@ const token = computed(() => page.props.session.token);
 const refresh_token = computed(() => page.props.session.refresh_token);
 const expires_at = computed(() => page.props.session.token_expires_at);
 
-// TODO server handles it
-const handleGetQuote = async () => {
-    router.post('/quotes');
-};
 </script>
 
 <template>
@@ -22,7 +18,7 @@ const handleGetQuote = async () => {
             <Link href="/login">Login</Link>
         </header>
         <main>
-            <button @click="handleGetQuote">Get Quote</button>
+            <Link href="/offers">Car Insurance Offers</Link>
         </main>
         <footer>
             <div v-if="token">{{ token }}</div>

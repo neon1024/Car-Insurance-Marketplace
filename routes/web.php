@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// TODO move all custom routes to /api.php
+
 Route::get("/", function () {
     return Inertia::render("Home");
 })->name("home.page");
@@ -45,7 +47,11 @@ Route::post("/login", function () {
     return redirect()->route("home.page");
 })->name("login.logic");
 
-Route::post("/quotes", function () {
+Route::get("/offers", function () {
+    return Inertia::render("Offers");
+})->name("offers.page");
+
+Route::post("/offers", function () {
     $token = session("auth_token");
 
     // authentication fields must be empty because the auth is provided by the token
@@ -208,7 +214,7 @@ Route::post("/quotes", function () {
 
     dd($quote_data);
 
-})->name("quotes.logic");
+})->name("offers.logic");
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
