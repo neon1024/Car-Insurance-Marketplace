@@ -22,6 +22,7 @@ const handleGetOffers = () => {
                     flex flex-col mx-auto
                     w-full
                     max-w-450
+                    space-y-4
                     px-4
                     py-6
                     bg-slate-950
@@ -30,11 +31,12 @@ const handleGetOffers = () => {
                     rounded-lg
                     shadow
                     mt-16
+                    mb-16
                 "
             >
                 <!-- TODO remove asiguratori care nu merg -->
                 <!-- Insurance Provider (provider.organization:) -->
-                <label>Asigurator</label>
+                <label class="text-3xl">Asigurator</label>
                 <div class="relative">
                     <select
                         required
@@ -70,10 +72,28 @@ const handleGetOffers = () => {
                 </div>
 
                 <!-- product.motor: -->
-                <label>Date asigurare</label>
+                <label class="text-3xl">Date asigurare</label>
 
-                <label>Data inceperii</label>
-                <input type="date">
+                <div class="flex items-center gap-3">
+                    <label for="data_inceperii" class="text-white text-right text-lg">
+                        Data inceperii:
+                    </label>
+                    <input
+                        id="data_inceperii"
+                        type="date"
+                        class="
+                            w-45
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            placeholder-slate-400
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                        "
+                    />
+                </div>
 
                 <div class="flex items-center gap-3">
                     <label for="age" class="text-white text-right">
@@ -106,7 +126,7 @@ const handleGetOffers = () => {
                 <!-- product.webhookLink? "https://domain.com/webhook/example" -->
 
                 <!-- Business Details (product.policyholder:) -->
-                <label>Date titular</label>
+                <label class="text-3xl">Date titular</label>
 
                 <label class="flex items-center gap-2 text-white">
                     <span>Persoana Fizica</span>
@@ -522,8 +542,26 @@ const handleGetOffers = () => {
                     </span>
                 </div>
 
-                <label>Data nasterii</label>
-                <input type="date">
+                <div class="flex items-center gap-3">
+                    <label for="titular_data_nasterii" class="text-white text-right text-lg">
+                        Data nasterii:
+                    </label>
+                    <input
+                        id="titular_data_nasterii"
+                        type="date"
+                        class="
+                            w-45
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            placeholder-slate-400
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                        "
+                    />
+                </div>
 
                 <input placeholder="Email" type="email">
                 <input placeholder="Telefon" type="text">
@@ -557,13 +595,50 @@ const handleGetOffers = () => {
                 <input placeholder="Numar" type="text">
                 <input placeholder="Eliberat de" type="text">
 
-                <label>Eliberat la data de</label>
-                <input type="date">
+                <div class="flex items-center gap-3">
+                    <label for="buletin_titular_eliberat_la_data_de" class="text-white text-right text-lg">
+                        Eliberat la data de:
+                    </label>
+                    <input
+                        id="buletin_titular_eliberat_la_data_de"
+                        type="date"
+                        class="
+                            w-45
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            placeholder-slate-400
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                        "
+                    />
+                </div>
 
                 <!-- Driving License (product.policyholder.drivingLicense:) -->
                 <label>Permis de conducere</label>
-                <label>Eliberat la data de</label>
-                <input type="date">
+
+                <div class="flex items-center gap-3">
+                    <label for="permis_conducere_titular_eliberat_la_data_de" class="text-white text-right text-lg">
+                        Eliberat la data de:
+                    </label>
+                    <input
+                        id="permis_conducere_titular_eliberat_la_data_de"
+                        type="date"
+                        class="
+                            w-45
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            placeholder-slate-400
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                        "
+                    />
+                </div>
 
                 <!-- TODO doar Romania? -->
                 <!-- Address (product.policyholder.address:) -->
@@ -936,7 +1011,7 @@ const handleGetOffers = () => {
                 </label>
 
                 <!-- Vehicle Info (product.vehicle.owner:) -->
-                <label>Date proprietar vehicul</label>
+                <label class="text-3xl">Date proprietar vehicul</label>
 
                 <label class="flex items-center gap-2 text-white">
                     <span>Persoana Fizica</span>
@@ -1351,8 +1426,26 @@ const handleGetOffers = () => {
                     </span>
                 </div>
 
-                <label>Data nasterii</label>
-                <input type="date">
+                <div class="flex items-center gap-3">
+                    <label for="proprietar_vehicul_data_nasterii" class="text-white text-right text-lg">
+                        Data nasterii:
+                    </label>
+                    <input
+                        id="proprietar_vehicul_data_nasterii"
+                        type="date"
+                        class="
+                            w-45
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            placeholder-slate-400
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                        "
+                    />
+                </div>
 
                 <input placeholder="Email" type="email">
                 <input placeholder="Telefon" type="text">
@@ -1387,8 +1480,27 @@ const handleGetOffers = () => {
 
                 <!-- Driving License (product.vehicle.owner.drivingLicense:) -->
                 <label>Permis de conducere</label>
-                <label>Eliberat la data de</label>
-                <input type="date">
+
+                <div class="flex items-center gap-3">
+                    <label for="permis_conducere_proprietar_vehicul_eliberat_la_data_de" class="text-white text-right text-lg">
+                        Eliberat la data de:
+                    </label>
+                    <input
+                        id="permis_conducere_proprietar_vehicul_eliberat_la_data_de"
+                        type="date"
+                        class="
+                            w-45
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            placeholder-slate-400
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                        "
+                    />
+                </div>
 
                 <!-- Address (product.vehicle.owner.address:) -->
                 <label>Adresa</label>
@@ -1761,7 +1873,7 @@ const handleGetOffers = () => {
 
                 <!-- TODO user ul poate adauga mai multi soferi -->
                 <!-- Driver (product.vehicle.driver:) (lista de persoane care conduc masina) -->
-                <label>Date soferi</label>
+                <label class="text-3xl">Date soferi</label>
                 <input placeholder="Nume">
                 <input placeholder="Prenume">
                 <input placeholder="CNP">
@@ -1771,7 +1883,7 @@ const handleGetOffers = () => {
                 <input placeholder="Telefon">
 
                 <!-- Car (product.vehicle:) -->
-                <label>Date vehicul</label>
+                <label class="text-3xl">Date vehicul</label>
                 <input placeholder="Numar inmatriculare">
 
                 <label>Tip inregistrare</label>
@@ -1931,8 +2043,26 @@ const handleGetOffers = () => {
                     </span>
                 </div>
 
-                <label>Prima inregistrare</label>
-                <input type="date"/>
+                <div class="flex items-center gap-3">
+                    <label for="prima_inregistrare" class="text-white text-right text-lg">
+                        Prima inregistrare:
+                    </label>
+                    <input
+                        id="prima_inregistrare"
+                        type="date"
+                        class="
+                            w-45
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            placeholder-slate-400
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                        "
+                    />
+                </div>
 
                 <label>Tip uz</label>
                 <div class="relative">
