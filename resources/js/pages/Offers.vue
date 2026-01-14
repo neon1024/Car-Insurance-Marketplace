@@ -3,7 +3,7 @@
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { PageProps } from '@/types/inertia';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const page = usePage<PageProps>();
 
@@ -12,6 +12,15 @@ const token = computed(() => page.props.session.token);
 const countries = ref<Array<{ iso: string; name: string }>>([]);
 
 const counties = ref<Array<{ code: string; name: string }>>([]);
+
+const countyCodePolicyHolder = ref<string>("");
+const countyCodeVehicleOwner = ref<string>("");
+
+const citiesPolicyHolder = ref<Array<{ siruta: string, name: string }>>([]);
+const citiesVehicleOwner = ref<Array<{ siruta: string, name: string }>>([]);
+
+const cityPolicyHolder = ref<{ siruta: string, name: string }>({ siruta: "", name: "" });
+const cityVehicleOwner = ref<{ siruta: string, name: string }>({ siruta: "", name: "" });
 
 // TODO re route in backend to login when token / session expires
 const handleGetOffers = () => {
@@ -62,8 +71,43 @@ const getCounties = async () => {
     }
 }
 
+const getCitiesByCountyCode = async (cities, countyCode) => {
+    try {
+        const response = await axios.get(`/api/cities/${countyCode.value}`, {
+            headers: {
+                Token: token.value
+            }
+        });
+
+        const data = response.data;
+
+        const error = data.error;
+
+        if(error) {
+            const status = data.status;
+            const message = data.message;
+
+            console.log("error", error);
+            console.log("status", status);
+            console.log("message", message);
+
+            return;
+        }
+
+        cities.value = data.data;
+    } catch(error) {
+        console.log(error);
+    }
+}
+
 getCountries();
 getCounties();
+
+watch(countyCodePolicyHolder, async () => getCitiesByCountyCode(citiesPolicyHolder, countyCodePolicyHolder));
+watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwner, countyCodeVehicleOwner));
+
+watch(cityPolicyHolder, async () => alert("PH" + " " + cityPolicyHolder.value.name));
+watch(cityVehicleOwner, async () => alert("VO" + " " + cityVehicleOwner.value.name));
 
 </script>
 
@@ -482,6 +526,7 @@ getCounties();
                 <label>Județ</label>
                 <div class="relative">
                     <select
+                        v-model="countyCodePolicyHolder"
                         class="
                             w-full
                             p-3
@@ -505,7 +550,26 @@ getCounties();
 
                 <!-- TODO select oras by county -->
                 <label>Oras</label>
-                <input type="text">
+                <div class="relative">
+                    <select
+                        v-model="cityPolicyHolder"
+                        class="
+                            w-full
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                            appearance-none
+                        "
+                    >
+                        <option value="" disabled selected>Alege orasul</option>
+
+                        <option v-for="city in citiesPolicyHolder" :key="city.siruta" :value="{siruta: city.siruta, name: city.name}">{{city.name}}</option>
+                    </select>
+                </div>
 
                 <!-- TODO codul SIRUTA este procesat in backend -->
                 <input placeholder="Strada" type="text">
@@ -805,6 +869,7 @@ getCounties();
                 <label>Județ</label>
                 <div class="relative">
                     <select
+                        v-model="countyCodeVehicleOwner"
                         class="
                                 w-full
                                 p-3
@@ -828,7 +893,26 @@ getCounties();
 
                 <!-- TODO select oras by county -->
                 <label>Oras</label>
-                <input type="text">
+                <div class="relative">
+                    <select
+                        v-model="cityVehicleOwner"
+                        class="
+                            w-full
+                            p-3
+                            rounded
+                            bg-slate-800
+                            text-white
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-green-500
+                            appearance-none
+                        "
+                    >
+                        <option value="" disabled selected>Alege orasul</option>
+
+                        <option v-for="city in citiesVehicleOwner" :key="city.siruta" :value="{ siruta: city.siruta, name: city.name }">{{city.name}}</option>
+                    </select>
+                </div>
 
                 <!-- TODO codul SIRUTA este procesat in backend -->
                 <input placeholder="Strada" type="text">

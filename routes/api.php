@@ -24,9 +24,9 @@ Route::get('/countries', function() use ($base_url) {
         $response_json = $response->json();
 
         $error = $response_json["error"];
-        $status = $response_json["status"];
 
         if($error) {
+            $status = $response_json["status"];
             $message = $response_json["message"];
 
             return response()->json([
@@ -57,7 +57,6 @@ Route::get('/countries', function() use ($base_url) {
     }
 })->name("countries.get");
 
-// TODO /nomenclature/county
 Route::get("/counties", function() use ($base_url) {
     $token = request()->header("Token");
 
@@ -77,9 +76,9 @@ Route::get("/counties", function() use ($base_url) {
         $response_json = $response->json();
 
         $error = $response_json["error"];
-        $status = $response_json["status"];
 
         if($error) {
+            $status = $response_json["status"];
             $message = $response_json["message"];
 
             return response()->json([
@@ -114,4 +113,62 @@ Route::get("/counties", function() use ($base_url) {
     }
 })->name("counties.get");
 
-// TODO /nomenclature/locality/{county_code}
+Route::get("/cities/{county_code}", function() use ($base_url) {
+    $token = request()->header("Token");
+    $county_code = request()->route()->parameter("county_code");
+
+    if(!$token) {
+        return response()->json([
+            "error" => true,
+            "status" => 401,
+            "message" => "Token missing"
+        ], 401);
+    }
+
+    // TODO validate county_code
+
+    try {
+        $response = Http::withoutVerifying()->withHeader(
+            "Token",
+            $token
+        )->get($base_url . "/nomenclature/locality/" . $county_code);
+
+        $response_json = $response->json();
+
+        $error = $response_json["error"];
+
+        if($error) {
+            $status = $response_json["status"];
+            $message = $response_json["message"];
+
+            return response()->json([
+                "error" => true,
+                "status" => $status,
+                "message" => $message
+            ], $status);
+        }
+
+        $data = $response_json["data"];
+
+        $cities = [];
+
+        foreach($data as $item) {
+            $cities[] = [
+                "siruta" => $item["siruta"],
+                "name" => $item["name"]
+            ];
+        }
+
+        return response()->json([
+            "error" => false,
+            "status" => 200,
+            "data" => $cities
+        ]);
+    } catch(Exception $error) {
+        return response()->json([
+            "error" => true,
+            "status" => 500,
+            "message" => $error->getMessage()
+        ], 500);
+    }
+})->name("cities.get");
