@@ -156,7 +156,7 @@ Route::post("/offers", function () {
         ],
         "hasDisability" => false,
         "isRetired" => false
-      ],
+                ],
       "driver" => [
           [
               "lastName" => "Pop",
@@ -189,7 +189,7 @@ Route::post("/offers", function () {
       "hasMobilityModifications" => false,
       "isLeased" => false,
       "isNew" => false
-    ],
+            ],
     "additionalData" => [
                 "product" => [
                     "motor" => [
