@@ -20,6 +20,11 @@ const citiesVehicleOwner = ref<Array<{ siruta: string, name: string }>>([]);
 const cityPolicyHolder = ref<{ siruta: string, name: string }>({ siruta: "", name: "" });
 const cityVehicleOwner = ref<{ siruta: string, name: string }>({ siruta: "", name: "" });
 
+const isNaturalPersonPolicyHolder = ref(false);
+const isNaturalPersonVehicleOwner = ref(false);
+
+const isAcquiredFromRomanianDealer = ref(true);
+
 // TODO re route in backend to login when token / session expires
 const handleGetOffers = () => {
     router.post("/offers");
@@ -88,520 +93,314 @@ getCounties();
 watch(countyCodePolicyHolder, async () => getCitiesByCountyCode(citiesPolicyHolder, countyCodePolicyHolder));
 watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwner, countyCodeVehicleOwner));
 
-watch(cityPolicyHolder, async () => alert("PH" + " " + cityPolicyHolder.value.name));
-watch(cityVehicleOwner, async () => alert("VO" + " " + cityVehicleOwner.value.name));
-
 </script>
 
 <template>
-    <body>
-    <div class="min-h-screen bg-slate-900 flex flex-col">
-        <header class="py-6 text-center">
-            <h1 class="text-3xl font-bold text-white">Oferte</h1>
+    <div class="min-h-screen bg-slate-900 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-slate-950 text-slate-200">
+
+        <header class="py-12 text-center">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                Configurator <span class="text-green-500">Oferte</span>
+            </h1>
+            <p class="mt-3 text-slate-400 font-medium">Completează datele de mai jos pentru a obține instant oferte de asigurare RCA</p>
         </header>
-        <main>
-            <form
-                @submit.prevent="handleGetOffers"
-                class="
-                    flex flex-col mx-auto
-                    w-full
-                    max-w-450
-                    space-y-4
-                    px-4
-                    py-6
-                    bg-slate-950
-                    border-2
-                    border-green-600
-                    rounded-lg
-                    shadow
-                    mt-16
-                    mb-16
-                "
-            >
-                <!-- TODO remove asiguratori care nu merg -->
-                <!-- Insurance Provider (provider.organization:) -->
-                <label class="text-3xl">Asigurator</label>
-                <div class="relative">
-                    <select
-                        required
-                        class="
-                            w-full
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                            appearance-none
-                        "
-                    >
-                        <option value="" disabled selected>Alege asigurator</option>
 
-                        <option value="allianz">Allianz</option>
-                        <option value="asirom">Asirom</option>
-                        <option value="axeria">Axeria</option>
-                        <option value="generali">Generali</option>
-                        <option value="groupama">Groupama</option>
-                        <option value="omniasig">Omniasig</option>
-                        <option value="hellas_autonom">Hellas Autonom</option>
-                        <option value="hellas_nextins">Hellas NextIns</option>
-                        <option value="grawe">Grawe</option>
-                        <option value="eazy_insure">Eazy Insure</option>
-                    </select>
+        <main class="max-w-4xl mx-auto px-6 pb-24">
+            <form @submit.prevent="handleGetOffers" class="relative overflow-hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl">
 
-                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        ▼
-                    </span>
+                <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-green-500/50 to-transparent"></div>
+
+                <div class="p-8 md:p-12 space-y-16">
+
+                    <section class="space-y-6">
+                        <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 tracking-tight">Asigurator</h2>
+                        <div class="relative group">
+                            <select required class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 focus:ring-4 focus:ring-green-500/10 outline-none transition-all cursor-pointer">
+                                <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege asigurator</option>
+                                <option value="allianz" class="bg-slate-900 text-white">Allianz</option>
+                                <option value="asirom" class="bg-slate-900 text-white">Asirom</option>
+                                <option value="axeria" class="bg-slate-900 text-white">Axeria</option>
+                                <option value="generali" class="bg-slate-900 text-white">Generali</option>
+                                <option value="groupama" class="bg-slate-900 text-white">Groupama</option>
+                                <option value="omniasig" class="bg-slate-900 text-white">Omniasig</option>
+                                <option value="hellas_autonom" class="bg-slate-900 text-white">Hellas Autonom</option>
+                                <option value="hellas_nextins" class="bg-slate-900 text-white">Hellas NextIns</option>
+                                <option value="grawe" class="bg-slate-900 text-white">Grawe</option>
+                                <option value="eazy_insure" class="bg-slate-900 text-white">Eazy Insure</option>
+                            </select>
+                            <span class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-green-500 opacity-70 group-hover:opacity-100 transition-opacity">▼</span>
+                        </div>
+                    </section>
+
+                    <section class="space-y-6">
+                        <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 tracking-tight">Date asigurare</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase text-slate-500 ml-1 tracking-widest">Data începerii</label>
+                                <input type="date" style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 outline-none transition-all" />
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase text-slate-500 ml-1 tracking-widest">Durata în luni</label>
+                                <input type="number" placeholder="ex: 12" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 outline-none transition-all" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="p-8 rounded-2xl bg-slate-950/30 border border-slate-800/50 space-y-8">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-6">
+                            <h2 class="text-2xl font-bold text-white">Date titular</h2>
+                            <label class="inline-flex items-center cursor-pointer group">
+                                <span class="mr-3 text-sm font-medium text-slate-400 group-hover:text-slate-200 transition">Persoană Fizică</span>
+                                <div class="relative">
+                                    <input type="checkbox" v-model="isNaturalPersonPolicyHolder" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-green-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full relative"></div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <template v-if="!isNaturalPersonPolicyHolder">
+                                <input placeholder="Nume firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                                <input placeholder="Număr registru firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            </template>
+                            <input placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input :placeholder="isNaturalPersonPolicyHolder ? 'CNP' : 'CUI'" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input placeholder="Email" type="email" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+
+                            <div class="md:col-span-2 grid grid-cols-3 gap-4">
+                                <input placeholder="Serie CI" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Numar CI" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Eliberat de" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            </div>
+                        </div>
+
+                        <div class="space-y-6 pt-4">
+                            <h3 class="font-bold text-green-500 uppercase text-xs tracking-[0.2em]">Adresă titular</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative group">
+                                    <select v-model="countyCodePolicyHolder" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                        <option value="" disabled class="bg-slate-900 text-slate-400">Alege județ</option>
+                                        <option v-for="county in counties" :key="county.code" :value="county.code" class="bg-slate-900 text-white">{{county.name}}</option>
+                                    </select>
+                                    <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                                </div>
+                                <div class="relative group">
+                                    <select v-model="cityPolicyHolder" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                        <option value="" disabled class="bg-slate-900 text-slate-400">Alege orașul</option>
+                                        <option v-for="city in citiesPolicyHolder" :key="city.siruta" :value="{siruta: city.siruta, name: city.name}" class="bg-slate-900 text-white">{{city.name}}</option>
+                                    </select>
+                                    <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <input placeholder="Strada" class="col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Bloc" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Scara" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Apartament" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Etaj" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Cod poștal" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="p-8 rounded-2xl bg-slate-950/30 border border-slate-800/50 space-y-8">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-6">
+                            <h2 class="text-2xl font-bold text-white">Date proprietar vehicul</h2>
+                            <label class="inline-flex items-center cursor-pointer group">
+                                <span class="mr-3 text-sm font-medium text-slate-400 group-hover:text-slate-200 transition">Persoană Fizică</span>
+                                <div class="relative">
+                                    <input type="checkbox" v-model="isNaturalPersonVehicleOwner" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-green-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full relative"></div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <template v-if="!isNaturalPersonVehicleOwner">
+                                <input placeholder="Companie" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                                <input placeholder="Cod registru" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                            </template>
+                            <input placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                            <input placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                            <input :placeholder="isNaturalPersonVehicleOwner ? 'CNP' : 'CUI'" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                            <input placeholder="Email" type="email" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                        </div>
+
+                        <div class="space-y-6 pt-4">
+                            <h3 class="font-bold text-green-500 uppercase text-xs tracking-[0.2em]">Adresă proprietar</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative group">
+                                    <select v-model="countyCodeVehicleOwner" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                        <option value="" disabled class="bg-slate-900 text-slate-400">Alege județ</option>
+                                        <option v-for="county in counties" :key="county.code" :value="county.code" class="bg-slate-900 text-white">{{county.name}}</option>
+                                    </select>
+                                    <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                                </div>
+                                <div class="relative group">
+                                    <select v-model="cityVehicleOwner" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                        <option value="" disabled class="bg-slate-900 text-slate-400">Alege orașul</option>
+                                        <option v-for="city in citiesVehicleOwner" :key="city.siruta" :value="{ siruta: city.siruta, name: city.name }" class="bg-slate-900 text-white">{{city.name}}</option>
+                                    </select>
+                                    <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <input placeholder="Strada" class="col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Bloc" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Scara" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Apartament" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Etaj" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input placeholder="Cod postal" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="space-y-6">
+                        <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4">Date soferi</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <input placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input placeholder="CNP" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input placeholder="Serie" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                        </div>
+                    </section>
+
+                    <section class="space-y-8">
+                        <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 tracking-tight">Date vehicul</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <input placeholder="Numar inmatriculare" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white uppercase outline-none focus:border-green-500/50" />
+                            <div class="relative group">
+                                <select class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                    <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege tip inregistrare</option>
+                                    <option value="registered" class="bg-slate-900 text-white">Inregistrat</option>
+                                    <option value="unregistered" class="bg-slate-900 text-white">Neinregistrat</option>
+                                </select>
+                                <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                            </div>
+
+                            <input placeholder="VIN" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white uppercase outline-none focus:border-green-500/50" />
+
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Tip vehicul</label>
+                                <div class="relative">
+                                    <select class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                        <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege tipul vehiculului</option>
+
+                                        <option value="L" class="bg-slate-900 text-white">L – Vehicule cu mai puțin de patru roți și unele patru roți ușoare</option>
+                                        <option value="L1" class="bg-slate-900 text-white">L1 – Vehicul cu două roți, capacitate ≤50 cm³, viteză ≤50 km/h</option>
+                                        <option value="L2" class="bg-slate-900 text-white">L2 – Vehicul cu trei roți, capacitate ≤50 cm³, viteză ≤50 km/h</option>
+                                        <option value="L3" class="bg-slate-900 text-white">L3 – Vehicul cu două roți, capacitate >50 cm³ sau viteză >50 km/h</option>
+                                        <option value="L4" class="bg-slate-900 text-white">L4 – Vehicul cu trei roți asimetric, capacitate >50 cm³ sau viteză >50 km/h (motociclete cu sidecar)</option>
+                                        <option value="L5" class="bg-slate-900 text-white">L5 – Vehicul cu trei roți simetric, capacitate >50 cm³ sau viteză >50 km/h</option>
+                                        <option value="L6" class="bg-slate-900 text-white">L6 – Vehicul cu patru roți, masă ≤350 kg, viteză ≤45 km/h, capacitate ≤50 cm³ sau putere ≤4 kW</option>
+                                        <option value="L7" class="bg-slate-900 text-white">L7 – Vehicul cu patru roți, masă ≤400 kg (550 kg pentru transport marfă), putere ≤15 kW</option>
+
+                                        <option value="M" class="bg-slate-900 text-white">M – Vehicule cu cel puțin patru roți pentru transport persoane</option>
+                                        <option value="M1" class="bg-slate-900 text-white">M1 – Transport persoane, până la 8 locuri + șofer</option>
+                                        <option value="M2" class="bg-slate-900 text-white">M2 – Transport persoane, >8 locuri + șofer, masă ≤5 t</option>
+                                        <option value="M3" class="bg-slate-900 text-white">M3 – Transport persoane, >8 locuri + șofer, masă >5 t</option>
+
+                                        <option value="N" class="bg-slate-900 text-white">N – Vehicule cu cel puțin patru roți pentru transport marfă</option>
+                                        <option value="N1" class="bg-slate-900 text-white">N1 – Transport marfă (≤3,5 t)</option>
+                                        <option value="N2" class="bg-slate-900 text-white">N2 – Transport marfă (>3,5 t, ≤12 t)</option>
+                                        <option value="N3" class="bg-slate-900 text-white">N3 – Transport marfă (>12 t)</option>
+
+                                        <option value="O" class="bg-slate-900 text-white">O – Remorci</option>
+                                        <option value="O1" class="bg-slate-900 text-white">O1 – Remorcă ≤0,75 t</option>
+                                        <option value="O2" class="bg-slate-900 text-white">O2 – Remorcă >0,75 t, ≤3,5 t</option>
+                                        <option value="O3" class="bg-slate-900 text-white">O3 – Remorcă >3,5 t, ≤10 t</option>
+                                        <option value="O4" class="bg-slate-900 text-white">O4 – Remorcă >10 t</option>
+
+                                        <option value="T" class="bg-slate-900 text-white">T – Vehicul agricol sau forestier motorizat</option>
+                                        <option value="R" class="bg-slate-900 text-white">R – Remorcă agricolă, raport masă ≥3,0</option>
+                                        <option value="S" class="bg-slate-900 text-white">S – Echipament tractat interschimbabil agricol/forestier, raport masă <3,0</option>
+
+                                        <option value="G" class="bg-slate-900 text-white">G – Vehicule off-road</option>
+                                    </select>
+                                    <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                                </div>
+                            </div>
+
+                            <input placeholder="Marca" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input placeholder="Model" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+
+                            <div class="md:col-span-2 grid grid-cols-2 md:grid-cols-5 gap-4">
+                                <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">An</label>
+                                    <input type="number" placeholder="An" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Cm³</label>
+                                    <input type="number" placeholder="Cm³" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Cai Putere</label>
+                                    <input type="number" placeholder="CP" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Masă totală</label>
+                                    <input type="number" placeholder="Kg" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Locuri</label>
+                                    <input type="number" placeholder="Nr." class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                                <div class="space-y-1">
+                                    <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Combustibil</label>
+                                    <div class="relative">
+                                        <select class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
+                                            <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege...</option>
+                                            <option value="diesel" class="bg-slate-900 text-white">Diesel</option>
+                                            <option value="petrol" class="bg-slate-900 text-white">Benzină</option>
+                                            <option value="hybrid" class="bg-slate-900 text-white">Hybrid</option>
+                                            <option value="electric" class="bg-slate-900 text-white">Electric</option>
+                                        </select>
+                                        <span class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1">
+                                    <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Prima inregistrare</label>
+                                    <input type="date" style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                                </div>
+
+                                <div class="space-y-1">
+                                    <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Tip Uz</label>
+                                    <div class="relative">
+                                        <select class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
+                                            <option value="" disabled selected class="bg-slate-900 text-slate-400">Personal...</option>
+                                            <option value="personal" class="bg-slate-900 text-white">Personal</option>
+                                        </select>
+                                        <span class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1">
+                                    <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Serie CIV</label>
+                                    <input placeholder="Ex: X123456" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <label class="flex items-center gap-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800 cursor-pointer hover:bg-slate-950/60 transition-all">
+                            <input v-model="isAcquiredFromRomanianDealer" type="checkbox" class="h-6 w-6 rounded border-slate-700 bg-slate-800 text-green-500 focus:ring-green-500 accent-green-600 shadow-sm" />
+                            <span class="text-sm font-medium text-slate-300">Vehicul achiziționat de la dealer român</span>
+                        </label>
+                    </section>
+
+                    <div class="pt-8">
+                        <button type="submit" @click="handleGetOffers" class="relative group w-full overflow-hidden rounded-2xl bg-green-500 px-8 py-6 text-xl font-black text-slate-950 transition-all hover:bg-green-400 hover:scale-[1.01] active:scale-[0.98] shadow-[0_0_50px_rgba(34,197,94,0.3)]">
+                            <div class="relative z-10 flex items-center justify-center gap-3">
+                                <span>OBȚINE OFERTE</span>
+                                <svg class="w-7 h-7 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                            </div>
+                        </button>
+                    </div>
+
                 </div>
-
-                <!-- product.motor: -->
-                <label class="text-3xl">Date asigurare</label>
-
-                <div class="flex items-center gap-3">
-                    <label for="data_inceperii" class="text-white text-right text-lg">
-                        Data inceperii:
-                    </label>
-                    <input
-                        id="data_inceperii"
-                        type="date"
-                        class="
-                            w-45
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            placeholder-slate-400
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                        "
-                    />
-                </div>
-
-                <!-- TODO validare <= 12 -->
-                <div class="flex items-center gap-3">
-                    <label for="age" class="text-white text-right">
-                        Durata in luni:
-                    </label>
-                    <input
-                        id="durata"
-                        type="number"
-                        placeholder="Numar"
-                        class="w-45 p-3 rounded bg-slate-800 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                </div>
-
-                <!-- product.motor.renewPolicy.series? "XX/XX/XX" -->
-                <!-- product.motor.renewPolicy.number? 123456789 -->
-
-                <!-- Business Details (product.policyholder:) -->
-                <label class="text-3xl">Date titular</label>
-
-                <label class="flex items-center gap-2 text-white">
-                    <span>Persoana Fizica</span>
-                    <input
-                        type="checkbox"
-                        class="h-4 w-4 accent-green-500"
-                    />
-                </label>
-
-                <!-- TODO render field uri firma daca persoana juridica -->
-                <input placeholder="Nume firma" type="text">
-                <input placeholder="Numar registru firma" type="text">
-                <input placeholder="Nume" type="text">
-                <input placeholder="Prenume" type="text">
-
-                <!-- TODO daca e firma atunci CUI, daca e persoana fizica atunci CNP -->
-                <input placeholder="Cod Identificare Fiscala" type="text">
-<!--                <input placeholder="CNP" type="text">-->
-
-                <input placeholder="Email" type="email">
-                <input placeholder="Telefon" type="text">
-
-                <!-- product.policyholder.identification.idNumber: (serie + numar) -->
-                <input placeholder="Serie" type="text">
-                <input placeholder="Numar" type="text">
-                <input placeholder="Eliberat de" type="text">
-
-                <!-- TODO doar Romania -->
-                <!-- Address (product.policyholder.address:) -->
-                <label>Adresa</label>
-
-                <!-- only for Romania -->
-                <label>Județ</label>
-                <div class="relative">
-                    <select
-                        v-model="countyCodePolicyHolder"
-                        class="
-                            w-full
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                            appearance-none
-                        "
-                    >
-                        <option value="" disabled selected>Alege județ</option>
-
-                        <option v-for="county in counties" :key="county.code" :value="county.code">{{county.name}}</option>
-                    </select>
-                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        ▼
-                    </span>
-                </div>
-
-                <!-- TODO select oras by county -->
-                <label>Oras</label>
-                <div class="relative">
-                    <select
-                        v-model="cityPolicyHolder"
-                        class="
-                            w-full
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                            appearance-none
-                        "
-                    >
-                        <option value="" disabled selected>Alege orasul</option>
-
-                        <option v-for="city in citiesPolicyHolder" :key="city.siruta" :value="{siruta: city.siruta, name: city.name}">{{city.name}}</option>
-                    </select>
-                </div>
-
-                <!-- TODO codul SIRUTA este procesat in backend -->
-                <input placeholder="Strada" type="text">
-                <input placeholder="Numar" type="text">
-                <input placeholder="Bloc" type="text">
-                <input placeholder="Scara" type="text">
-                <input placeholder="Apartament" type="text">
-                <input placeholder="Etaj" type="text">
-                <input placeholder="Cod postal" type="text">
-
-                <!-- Vehicle Info (product.vehicle.owner:) -->
-                <label class="text-3xl">Date proprietar vehicul</label>
-
-                <label class="flex items-center gap-2 text-white">
-                    <span>Persoana Fizica</span>
-                    <input
-                        type="checkbox"
-                        class="h-4 w-4 accent-green-500"
-                    />
-                </label>
-
-                <!-- TODO daca e persoana juridica arata field urile pentru firma -->
-                <input placeholder="Companie" type="text">
-                <input placeholder="Cod registru" type="text">
-                <input placeholder="Nume" type="text">
-                <input placeholder="Prenume" type="text">
-
-                <!-- TODO daca e persoana juridica CIF, daca e persoana fizica CNP -->
-                <input placeholder="Cod Identificare Fiscala">
-<!--                <input placeholder="CNP"/>-->
-
-                <input placeholder="Email" type="email">
-                <input placeholder="Telefon" type="text">
-
-                <!-- Address (product.vehicle.owner.address:) -->
-                <label>Adresa</label>
-
-                <label>Județ</label>
-                <div class="relative">
-                    <select
-                        v-model="countyCodeVehicleOwner"
-                        class="
-                                w-full
-                                p-3
-                                rounded
-                                bg-slate-800
-                                text-white
-                                focus:outline-none
-                                focus:ring-2
-                                focus:ring-green-500
-                                appearance-none
-                            "
-                    >
-                        <option value="" disabled selected>Alege județ</option>
-
-                        <option v-for="county in counties" :key="county.code" :value="county.code">{{county.name}}</option>
-                    </select>
-                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        ▼
-                    </span>
-                </div>
-
-                <!-- TODO select oras by county -->
-                <label>Oras</label>
-                <div class="relative">
-                    <select
-                        v-model="cityVehicleOwner"
-                        class="
-                            w-full
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                            appearance-none
-                        "
-                    >
-                        <option value="" disabled selected>Alege orasul</option>
-
-                        <option v-for="city in citiesVehicleOwner" :key="city.siruta" :value="{ siruta: city.siruta, name: city.name }">{{city.name}}</option>
-                    </select>
-                </div>
-
-                <!-- TODO codul SIRUTA este procesat in backend -->
-                <input placeholder="Strada" type="text">
-                <input placeholder="Numar" type="text">
-                <input placeholder="Bloc" type="text">
-                <input placeholder="Scara" type="text">
-                <input placeholder="Apartament" type="text">
-                <input placeholder="Etaj" type="text">
-                <input placeholder="Cod postal" type="text">
-
-                <!-- TODO user ul poate adauga mai multi soferi -->
-                <!-- Driver (product.vehicle.driver:) (lista de persoane care conduc masina) -->
-                <label class="text-3xl">Date soferi</label>
-                <input placeholder="Nume">
-                <input placeholder="Prenume">
-                <input placeholder="CNP">
-                <!-- product.vehicle.driver.identification.idNumber: (serie + numar) -->
-                <input placeholder="Serie">
-                <input placeholder="Numar">
-                <input placeholder="Telefon">
-
-                <!-- Car (product.vehicle:) -->
-                <label class="text-3xl">Date vehicul</label>
-                <input placeholder="Numar inmatriculare">
-
-                <label>Tip inregistrare</label>
-                <div class="relative">
-                    <select
-                        class="
-                            w-full
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                            appearance-none
-                        "
-                    >
-                        <option value="" disabled selected>Alege tip inregistrare</option>
-
-                        <option value="registered">Inregistrat</option>
-                        <option value="unregistered">Neinregistrat</option>
-                    </select>
-                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        ▼
-                    </span>
-                </div>
-
-                <input placeholder="VIN">
-
-                <!-- TODO v-for render -->
-                <label>Tip vehicul</label>
-                <div class="relative">
-                    <select
-                        class="
-                            w-full
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                            appearance-none
-                        "
-                    >
-                        <option value="" disabled selected>Alege tipul vehiculului</option>
-
-                        <option value="M1">M1 – Autovehicule pentru transportul de persoane (≤8 locuri + șofer)</option>
-                        <option value="M2">M2 – Autovehicule pentru transportul de persoane (>8 locuri, mediu)</option>
-                        <option value="M3">M3 – Autovehicule pentru transportul de persoane (>8 locuri, greu)</option>
-                        <option value="N1">N1 – Autovehicule pentru transportul de marfă (≤3,5 t)</option>
-                        <option value="N2">N2 – Autovehicule pentru transportul de marfă (>3,5 t și ≤12 t)</option>
-                        <option value="N3">N3 – Autovehicule pentru transportul de marfă (>12 t)</option>
-                        <option value="O1">O1 – Remorci (≤0,75 t)</option>
-                        <option value="O2">O2 – Remorci (>0,75 t și ≤3,5 t)</option>
-                        <option value="O3">O3 – Remorci (>3,5 t și ≤10 t)</option>
-                        <option value="O4">O4 – Remorci (>10 t)</option>
-                        <option value="L1e">L1e – Vehicule cu două roți, ≤50 cm³</option>
-                        <option value="L2e">L2e – Vehicule cu trei roți, ≤50 cm³</option>
-                        <option value="L3e">L3e – Motociclete cu două roți, >50 cm³</option>
-                        <option value="L4e">L4e – Motociclete cu două roți cu ataș, >50 cm³</option>
-                        <option value="L5e">L5e – Tricicluri cu motor, >50 cm³</option>
-                        <option value="L6e">L6e – Cvadraciclu ușor</option>
-                        <option value="L7e">L7e – Cvadraciclu greu</option>
-                    </select>
-                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        ▼
-                    </span>
-                </div>
-
-                <input placeholder="Marca">
-                <input placeholder="Model">
-
-                <div class="flex items-center gap-3">
-                    <label for="age" class="text-white text-right">
-                        An fabricatie:
-                    </label>
-                    <input
-                        id="an_fabricatie"
-                        type="number"
-                        placeholder="An"
-                        class="w-45 p-3 rounded bg-slate-800 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <label for="age" class="text-white text-right">
-                        Capacitate motor:
-                    </label>
-                    <input
-                        id="capacitate_motor"
-                        type="number"
-                        placeholder="Cm³"
-                        class="w-45 p-3 rounded bg-slate-800 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <label for="age" class="text-white text-right">
-                        Putere motor:
-                    </label>
-                    <input
-                        id="putere_motor"
-                        type="number"
-                        placeholder="Cai Putere"
-                        class="w-45 p-3 rounded bg-slate-800 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <label for="age" class="text-white text-right">
-                        Greutate:
-                    </label>
-                    <input
-                        id="greutate"
-                        type="number"
-                        placeholder="Kg"
-                        class="w-45 p-3 rounded bg-slate-800 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <label for="age" class="text-white text-right">
-                        Locuri:
-                    </label>
-                    <input
-                        id="locuri"
-                        type="number"
-                        placeholder="Numar"
-                        class="w-45 p-3 rounded bg-slate-800 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                </div>
-
-                <label>Combustibil</label>
-                <div class="relative">
-                    <select
-                        class="
-                            w-full
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                            appearance-none
-                        "
-                    >
-                        <option value="" disabled selected>Alege tipul combustibilului</option>
-
-                        <option value="diesel">Diesel</option>
-                        <option value="petrol">Benzină</option>
-                        <option value="hybrid">Hybrid</option>
-                        <option value="electric">Electric</option>
-                    </select>
-                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        ▼
-                    </span>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <label for="prima_inregistrare" class="text-white text-right text-lg">
-                        Prima inregistrare:
-                    </label>
-                    <input
-                        id="prima_inregistrare"
-                        type="date"
-                        class="
-                            w-45
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            placeholder-slate-400
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                        "
-                    />
-                </div>
-
-                <label>Tip uz</label>
-                <div class="relative">
-                    <select
-                        class="
-                            w-full
-                            p-3
-                            rounded
-                            bg-slate-800
-                            text-white
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-green-500
-                            appearance-none
-                        "
-                    >
-                        <option value="" disabled selected>Alege tip uz</option>
-
-                        <option value="personal">Personal</option>
-                    </select>
-                </div>
-
-                <input placeholder="CIV">
-
-                <label class="flex items-center gap-2 text-white">
-                    <span>Vehicul achizitionat de la dealer roman</span>
-                    <input
-                        type="checkbox"
-                        class="h-4 w-4 accent-green-500"
-                    />
-                </label>
-
-                <button type="submit" @click="handleGetOffers">Get Offers</button>
             </form>
         </main>
-        <footer>
-        </footer>
-        </div>
-    </body>
+    </div>
 </template>
 
 <style scoped>
