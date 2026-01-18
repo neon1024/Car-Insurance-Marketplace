@@ -60,51 +60,26 @@ Route::post("/offers", function () {
         "provider" => [
             "organization" => [
                 "businessName" => "asirom"
-            ],
-            "authentication" => [
-                "account" => "",
-                "password" => "",
-                "code" => ""
             ]
         ],
         "product" => [
             "motor" => [
                 "startDate" => "2026-01-09",
                 "termTime" => 12,
-                "installmentCount" => 1,
-                "commissionPercentLimit" => 12,
                 "renewPolicy" => [
                     "series" => "XX/XX/XX",
                     "number" => 123456789
-                ],
-                "generatePaymentLink" => false,
-                "webhookLink" => "https://domain.com/webhook/example"
+                ]
             ],
             "policyholder" => [
                 "businessName" => "Life is Hard",
                 "companyRegistryNumber" => "J12/1403/2004",
-                "caenCode" => 6202,
                 "lastName" => "Pop",
                 "firstName" => "Vasile",
-                "isForeignPerson" => false,
                 "taxId" => "16336490",
-                "nationality" => "RO",
-                "citizenship" => "RO",
-                "gender" => "m",
-                "birthdate" => "1996-01-01",
                 "email" => "email@email.ro",
                 "mobileNumber" => "0744444444",
-                "identification" => [
-                    "idType" => "CI",
-                    "idNumber" => "CJ123456",
-                    "issueAuthority" => "SPCLEP Cluj",
-                    "issueDate" => "2022-11-24"
-                ],
-                "drivingLicense" => [
-                    "issueDate" => "2022-11-24"
-                ],
                 "address" => [
-                    "country" => "RO",
                     "county" => "CJ",
                     "city" => "Cluj-Napoca",
                     "cityCode" => 54984,
@@ -115,91 +90,62 @@ Route::post("/offers", function () {
                     "apartment" => "12",
                     "floor" => "3",
                     "postcode" => "400356"
-                ],
-                "hasDisability" => false,
-                "isRetired" => false
+                ]
             ],
             "vehicle" => [
                 "owner" => [
                     "businessName" => "Life is Hard",
                     "companyRegistryNumber" => "J12/1403/2004",
-                    "caenCode" => 6202,
                     "lastName" => "Pop",
                     "firstName" => "Vasile",
-                    "isForeignPerson" => false,
                     "taxId" => "16336490",
-                    "nationality" => "RO",
-                    "citizenship" => "RO",
-                    "gender" => "m",
-                    "birthdate" => "1996-01-01",
                     "email" => "email@email.ro",
                     "mobileNumber" => "0744444444",
-                    "identification" => [
-                        "idType" => "CI",
-                        "idNumber" => "CJ123456"
-                    ],
-        "drivingLicense" => [
-            "issueDate" => "2022-11-24"
-        ],
-        "address" => [
-            "country" => "RO",
-          "county" => "CJ",
-          "city" => "Cluj-Napoca",
-          "cityCode" => 54984,
-          "street" => "Principala",
-          "houseNumber" => "19-21",
-          "building" => "A1",
-          "staircase" => "1",
-          "apartment" => "12",
-          "floor" => "3",
-          "postcode" => "400356"
-        ],
-        "hasDisability" => false,
-        "isRetired" => false
+                    "address" => [
+                        "county" => "CJ",
+                        "city" => "Cluj-Napoca",
+                        "cityCode" => 54984,
+                        "street" => "Principala",
+                        "houseNumber" => "19-21",
+                        "building" => "A1",
+                        "staircase" => "1",
+                        "apartment" => "12",
+                        "floor" => "3",
+                        "postcode" => "400356"
+                    ]
                 ],
-      "driver" => [
-          [
-              "lastName" => "Pop",
-          "firstName" => "Vasile",
-          "taxId" => "5030904270032",
-          "identification" => [
-            "idNumber" => "CJ123456"
-          ],
-          "mobileNumber" => "0766999000"
-        ]
-      ],
-      "licensePlate" => "CJ10ABC",
-      "registrationType" => "registered",
-      "vin" => "WBA4H31080BH08057",
-      "vehicleType" => "M1",
-      "brand" => "Dacia",
-      "model" => "Logan",
-      "yearOfConstruction" => 2020,
-      "engineDisplacement" => 1400,
-      "enginePower" => 90,
-      "totalWeight" => 1500,
-      "seats" => 5,
-      "fuelType" => "diesel",
-      "firstRegistration" => "2020-01-06",
-      "usageType" => "personal",
-      "identification" => [
-          "idNumber" => "H123456"
-      ],
-      "currentMileage" => 50000,
-      "hasMobilityModifications" => false,
-      "isLeased" => false,
-      "isNew" => false
+                "driver" => [
+                    [
+                        "lastName" => "Pop",
+                        "firstName" => "Vasile",
+                        "taxId" => "5030904270032",
+                        "identification" => [
+                            "idNumber" => "CJ123456"
+                        ],
+                        "mobileNumber" => "0766999000"
+                    ]
+                ],
+                "licensePlate" => "CJ10ABC",
+                "registrationType" => "registered",
+                "vin" => "WBA4H31080BH08057",
+                "vehicleType" => "M1",
+                "brand" => "Dacia",
+                "model" => "Logan",
+                "yearOfConstruction" => 2020,
+                "engineDisplacement" => 1400,
+                "enginePower" => 90,
+                "totalWeight" => 1500,
+                "seats" => 5,
+                "fuelType" => "diesel",
+                "firstRegistration" => "2020-01-06",
+                "usageType" => "personal",
+                "identification" => [
+                    "idNumber" => "H123456"
+                ]
             ],
-    "additionalData" => [
+            "additionalData" => [
                 "product" => [
-                    "motor" => [
-                        "hasCasco" => true
-        ],
-        "coordinatorId" => 76241,
-        "recommenderTaxId" => "5030904270032",
-        "protocolId" => 222,
-        "extraCoverage" => true,
-        "isAcquiredFromRomanianDealer" => true
+                    "isAcquiredFromRomanianDealer" => true
                 ]
             ]
         ]
