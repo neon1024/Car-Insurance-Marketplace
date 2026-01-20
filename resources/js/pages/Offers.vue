@@ -65,6 +65,24 @@ const formData = ref({
     vehicleOwnerFloor: "",
     vehicleOwnerPostcode: "",
 
+    vehicleLicensePlate: "",
+    vehicleRegistrationType: "",
+    vehicleVIN: "",
+    vehicleType: "",
+    vehicleBrand: "",
+    vehicleModel: "",
+    vehicleYearOfConstruction: "",
+    vehicleEngineDisplacement: "",
+    vehicleEnginePower: "",
+    vehicleTotalWeight: "",
+    vehicleSeats: "",
+    vehicleFuelType: "",
+    vehicleFirstRegistration: "",
+    vehicleUsageType: "",
+    vehicleCIV: "",
+    vehicleCurrentMileage: "",
+    vehicleExpirationDatePti: "",
+
     isAcquiredFromRomanianDealer: true
 });
 
@@ -348,9 +366,9 @@ ss
                     <section class="space-y-8">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 tracking-tight">Date vehicul</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <input placeholder="Numar inmatriculare" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white uppercase outline-none focus:border-green-500/50" />
+                            <input v-model="formData.vehicleLicensePlate" placeholder="Numar inmatriculare" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white uppercase outline-none focus:border-green-500/50" />
                             <div class="relative group">
-                                <select class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                <select v-model="formData.vehicleRegistrationType" class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
                                     <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege tip inregistrare</option>
                                     <option value="registered" class="bg-slate-900 text-white">Inregistrat</option>
                                     <option value="unregistered" class="bg-slate-900 text-white">Neinregistrat</option>
@@ -358,12 +376,12 @@ ss
                                 <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
                             </div>
 
-                            <input placeholder="VIN" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white uppercase outline-none focus:border-green-500/50" />
+                            <input v-model="formData.vehicleVIN" placeholder="VIN" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white uppercase outline-none focus:border-green-500/50" />
 
                             <div class="md:col-span-2 space-y-2">
                                 <label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Tip vehicul</label>
                                 <div class="relative">
-                                    <select class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                    <select v-model="formData.vehicleType" class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
                                         <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege tipul vehiculului</option>
 
                                         <option value="L" class="bg-slate-900 text-white">L – Vehicule cu mai puțin de patru roți și unele patru roți ușoare</option>
@@ -401,27 +419,27 @@ ss
                                 </div>
                             </div>
 
-                            <input placeholder="Marca" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                            <input placeholder="Model" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.vehicleBrand" placeholder="Marca" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.vehicleModel" placeholder="Model" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
 
                             <div class="md:col-span-2 grid grid-cols-2 md:grid-cols-5 gap-4">
                                 <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">An</label>
-                                    <input type="number" placeholder="An" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                    <input v-model="formData.vehicleYearOfConstruction" type="number" placeholder="An" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
                                 <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Cm³</label>
-                                    <input type="number" placeholder="Cm³" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                    <input v-model="formData.vehicleEngineDisplacement" type="number" placeholder="Cm³" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
                                 <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Cai Putere</label>
-                                    <input type="number" placeholder="CP" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                    <input v-model="formData.vehicleEnginePower" type="number" placeholder="CP" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
                                 <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Masă totală</label>
-                                    <input type="number" placeholder="Kg" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                    <input v-model="formData.vehicleTotalWeight" type="number" placeholder="Kg" class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
                                 <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Locuri</label>
-                                    <input type="number" placeholder="Nr." class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
+                                    <input v-model="formData.vehicleSeats" type="number" placeholder="Nr." class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                                 <div class="space-y-1">
                                     <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Combustibil</label>
                                     <div class="relative">
-                                        <select class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
+                                        <select v-model="formData.vehicleFuelType" class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
                                             <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege...</option>
                                             <option value="diesel" class="bg-slate-900 text-white">Diesel</option>
                                             <option value="petrol" class="bg-slate-900 text-white">Benzină</option>
@@ -434,13 +452,13 @@ ss
 
                                 <div class="space-y-1">
                                     <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Prima inregistrare</label>
-                                    <input type="date" style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                                    <input v-model="formData.vehicleFirstRegistration" type="date" style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
                                 </div>
 
                                 <div class="space-y-1">
                                     <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Tip Uz</label>
                                     <div class="relative">
-                                        <select class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
+                                        <select v-model="formData.vehicleUsageType" class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
                                             <option value="" disabled selected class="bg-slate-900 text-slate-400">Personal...</option>
                                             <option value="personal" class="bg-slate-900 text-white">Personal</option>
                                         </select>
@@ -450,7 +468,7 @@ ss
 
                                 <div class="space-y-1">
                                     <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Serie CIV</label>
-                                    <input placeholder="Ex: X123456" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                                    <input v-model="formData.vehicleCIV" placeholder="Ex: X123456" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
                                 </div>
                             </div>
                         </div>

@@ -151,7 +151,11 @@ Route::post("/offers", function () {
             ],
             "additionalData" => [
                 "product" => [
-                    "isAcquiredFromRomanianDealer" => true
+                    "isAcquiredFromRomanianDealer" => true,
+                    // TODO
+                    "vehicle" => [
+                        "expirationDatePti" => "2026-02-28"
+                    ]
                 ]
             ]
         ]
