@@ -65,6 +65,13 @@ const formData = ref({
     vehicleOwnerFloor: "",
     vehicleOwnerPostcode: "",
 
+    driverLastName: "",
+    driverFirstName: "",
+    driverCNP: "",
+    driverIDSeries: "",
+    driverIDNumber: "",
+    driverPhone: "",
+
     vehicleLicensePlate: "",
     vehicleRegistrationType: "",
     vehicleVIN: "",
@@ -354,12 +361,12 @@ ss
                     <section class="space-y-6">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4">Date soferi</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <input placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                            <input placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                            <input placeholder="CNP" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                            <input placeholder="Serie" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                            <input placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                            <input placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.driverLastName" placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input v-model="formData.driverFirstName" placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input v-model="formData.driverCNP" placeholder="CNP" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input v-model="formData.driverIDSeries" placeholder="Serie" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.driverIDNumber" placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.driverPhone" placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
                         </div>
                     </section>
 
