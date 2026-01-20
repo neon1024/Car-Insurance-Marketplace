@@ -64,7 +64,7 @@ Route::post("/offers", function () {
         ],
         "product" => [
             "motor" => [
-                "startDate" => "2026-01-09",
+                "startDate" => "2026-01-28",
                 "termTime" => 12,
                 "renewPolicy" => [
                     "series" => "XX/XX/XX",
@@ -74,6 +74,8 @@ Route::post("/offers", function () {
             "policyholder" => [
                 "businessName" => "Life is Hard",
                 "companyRegistryNumber" => "J12/1403/2004",
+                // TODO
+                "caenCode" => "6202",
                 "lastName" => "Pop",
                 "firstName" => "Vasile",
                 "taxId" => "16336490",
@@ -96,6 +98,8 @@ Route::post("/offers", function () {
                 "owner" => [
                     "businessName" => "Life is Hard",
                     "companyRegistryNumber" => "J12/1403/2004",
+                    // TODO
+                    "caenCode" => "6202",
                     "lastName" => "Pop",
                     "firstName" => "Vasile",
                     "taxId" => "16336490",
@@ -141,7 +145,9 @@ Route::post("/offers", function () {
                 "usageType" => "personal",
                 "identification" => [
                     "idNumber" => "H123456"
-                ]
+                ],
+                // TODO
+                "currentMileage" => 180000
             ],
             "additionalData" => [
                 "product" => [

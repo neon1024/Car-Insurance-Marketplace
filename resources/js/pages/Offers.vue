@@ -11,19 +11,92 @@ const token = computed(() => page.props.session.token);
 
 const counties = ref<Array<{ code: string; name: string }>>([]);
 
-const countyCodePolicyHolder = ref<string>("");
-const countyCodeVehicleOwner = ref<string>("");
-
 const citiesPolicyHolder = ref<Array<{ siruta: string, name: string }>>([]);
 const citiesVehicleOwner = ref<Array<{ siruta: string, name: string }>>([]);
-
-const cityPolicyHolder = ref<{ siruta: string, name: string }>({ siruta: "", name: "" });
-const cityVehicleOwner = ref<{ siruta: string, name: string }>({ siruta: "", name: "" });
 
 const isNaturalPersonPolicyHolder = ref(false);
 const isNaturalPersonVehicleOwner = ref(false);
 
-const isAcquiredFromRomanianDealer = ref(true);
+// TODO
+const formData = ref({
+    insurer: "",
+    insuranceStartDate: "",
+    insuranceDurationInMonths: 12,
+
+    policyHolderBusinessName: "",
+    policyHolderBusinessRegisterNumber: "",
+    policyHolderBusinessCAENCode: "",
+    policyHolderBusinessCUI: "",
+
+    policyHolderLastName: "",
+    policyHolderFirstName: "",
+    policyHolderCNP: "",
+    policyHolderEmail: "",
+    policyHolderPhone: "",
+
+    policyHolderCountyCode: "",
+    policyHolderCity: { siruta: "", name: "" },
+    policyHolderStreet: "",
+    policyHolderHouseNumber: "",
+    policyHolderBuilding: "",
+    policyHolderStaircase: "",
+    policyHolderApartment: "",
+    policyHolderFloor: "",
+    policyHolderPostcode: "",
+
+    vehicleOwnerBusinessName: "",
+    vehicleOwnerBusinessRegisterNumber: "",
+    vehicleOwnerBusinessCAENCode: "",
+    vehicleOwnerBusinessCUI: "",
+
+    vehicleOwnerLastName: "",
+    vehicleOwnerFirstName: "",
+    vehicleOwnerCNP: "",
+    vehicleOwnerEmail: "",
+    vehicleOwnerPhone: "",
+
+    vehicleOwnerCountyCode: "",
+    vehicleOwnerCity: { siruta: "", name: "" },
+    vehicleOwnerStreet: "",
+    vehicleOwnerHouseNumber: "",
+    vehicleOwnerBuilding: "",
+    vehicleOwnerStaircase: "",
+    vehicleOwnerApartment: "",
+    vehicleOwnerFloor: "",
+    vehicleOwnerPostcode: "",
+
+    isAcquiredFromRomanianDealer: true
+});
+
+const policyHolderTaxId = computed({
+    get() {
+        return isNaturalPersonPolicyHolder.value ?
+            formData.value.policyHolderCNP :
+            formData.value.policyHolderBusinessCUI;
+    },
+    set(value) {
+        if(isNaturalPersonPolicyHolder.value) {
+            formData.value.policyHolderCNP = value;
+        } else {
+            formData.value.policyHolderBusinessCUI = value;
+        }
+    }
+});
+
+const vehicleOwnerTaxId = computed({
+    get() {
+        return isNaturalPersonVehicleOwner.value ?
+            formData.value.vehicleOwnerCNP :
+            formData.value.vehicleOwnerBusinessCUI;
+    },
+    set(value) {
+        if(isNaturalPersonVehicleOwner.value) {
+            formData.value.vehicleOwnerCNP = value;
+        } else {
+            formData.value.vehicleOwnerBusinessCUI = value;
+        }
+    }
+});
 
 // TODO re route in backend to login when token / session expires
 const handleGetOffers = () => {
@@ -61,7 +134,7 @@ const getCounties = async () => {
 
 const getCitiesByCountyCode = async (cities, countyCode) => {
     try {
-        const response = await axios.get(`/api/cities/${countyCode.value}`, {
+        const response = await axios.get(`/api/cities/${countyCode}`, {
             headers: {
                 Token: token.value
             }
@@ -90,8 +163,8 @@ const getCitiesByCountyCode = async (cities, countyCode) => {
 
 getCounties();
 
-watch(countyCodePolicyHolder, async () => getCitiesByCountyCode(citiesPolicyHolder, countyCodePolicyHolder));
-watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwner, countyCodeVehicleOwner));
+watch(async () => formData.value.policyHolderCountyCode, async () => getCitiesByCountyCode(citiesPolicyHolder, formData.value.policyHolderCountyCode));
+watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCountyCode(citiesVehicleOwner, formData.value.vehicleOwnerCountyCode));
 
 </script>
 
@@ -115,7 +188,7 @@ watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwn
                     <section class="space-y-6">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 tracking-tight">Asigurator</h2>
                         <div class="relative group">
-                            <select required class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 focus:ring-4 focus:ring-green-500/10 outline-none transition-all cursor-pointer">
+                            <select v-model="formData.insurer" required class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 focus:ring-4 focus:ring-green-500/10 outline-none transition-all cursor-pointer">
                                 <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege asigurator</option>
                                 <option value="allianz" class="bg-slate-900 text-white">Allianz</option>
                                 <option value="asirom" class="bg-slate-900 text-white">Asirom</option>
@@ -137,11 +210,11 @@ watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwn
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-2">
                                 <label class="text-xs font-bold uppercase text-slate-500 ml-1 tracking-widest">Data începerii</label>
-                                <input type="date" style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 outline-none transition-all" />
+                                <input v-model="formData.insuranceStartDate" type="date" style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 outline-none transition-all" />
                             </div>
                             <div class="space-y-2">
                                 <label class="text-xs font-bold uppercase text-slate-500 ml-1 tracking-widest">Durata în luni</label>
-                                <input type="number" placeholder="ex: 12" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 outline-none transition-all" />
+                                <input v-model="formData.insuranceDurationInMonths" type="number" placeholder="ex: 12" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 outline-none transition-all" />
                             </div>
                         </div>
                     </section>
@@ -160,34 +233,34 @@ watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwn
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <template v-if="!isNaturalPersonPolicyHolder">
-                                <input placeholder="Nume firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                                <input placeholder="Număr registru firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                                <input v-model="formData.policyHolderBusinessName" placeholder="Nume firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                                <input v-model="formData.policyHolderBusinessRegisterNumber" placeholder="Număr registru firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
                             </template>
-                            <input placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                            <input placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                            <input :placeholder="isNaturalPersonPolicyHolder ? 'CNP' : 'CUI'" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                            <input placeholder="Email" type="email" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                            <input placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.policyHolderLastName" placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input v-model="formData.policyHolderFirstName" placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input v-model="policyHolderTaxId" :placeholder="isNaturalPersonPolicyHolder ? 'CNP' : 'CUI'" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input v-model="formData.policyHolderEmail" placeholder="Email" type="email" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.policyHolderPhone" placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
 
-                            <div class="md:col-span-2 grid grid-cols-3 gap-4">
-                                <input placeholder="Serie CI" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Numar CI" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Eliberat de" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                            </div>
+<!--                            <div class="md:col-span-2 grid grid-cols-3 gap-4">-->
+<!--                                <input placeholder="Serie CI" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />-->
+<!--                                <input placeholder="Numar CI" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />-->
+<!--                                <input placeholder="Eliberat de" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />-->
+<!--                            </div>-->
                         </div>
 
                         <div class="space-y-6 pt-4">
                             <h3 class="font-bold text-green-500 uppercase text-xs tracking-[0.2em]">Adresă titular</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="relative group">
-                                    <select v-model="countyCodePolicyHolder" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                    <select v-model="formData.policyHolderCountyCode" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
                                         <option value="" disabled class="bg-slate-900 text-slate-400">Alege județ</option>
                                         <option v-for="county in counties" :key="county.code" :value="county.code" class="bg-slate-900 text-white">{{county.name}}</option>
                                     </select>
                                     <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
                                 </div>
                                 <div class="relative group">
-                                    <select v-model="cityPolicyHolder" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                    <select v-model="formData.policyHolderCity" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
                                         <option value="" disabled class="bg-slate-900 text-slate-400">Alege orașul</option>
                                         <option v-for="city in citiesPolicyHolder" :key="city.siruta" :value="{siruta: city.siruta, name: city.name}" class="bg-slate-900 text-white">{{city.name}}</option>
                                     </select>
@@ -195,13 +268,13 @@ watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwn
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <input placeholder="Strada" class="col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Bloc" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Scara" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Apartament" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Etaj" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Cod poștal" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.policyHolderStreet" placeholder="Strada" class="col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.policyHolderHouseNumber" placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.policyHolderBuilding" placeholder="Bloc" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.policyHolderStaircase" placeholder="Scara" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.policyHolderApartment" placeholder="Apartament" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.policyHolderFloor" placeholder="Etaj" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.policyHolderPostcode" placeholder="Cod poștal" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
                             </div>
                         </div>
                     </section>
@@ -220,28 +293,28 @@ watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwn
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <template v-if="!isNaturalPersonVehicleOwner">
-                                <input placeholder="Companie" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
-                                <input placeholder="Cod registru" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                                <input v-model="formData.vehicleOwnerBusinessName" placeholder="Companie" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                                <input v-model="formData.vehicleOwnerBusinessRegisterNumber" placeholder="Cod registru" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
                             </template>
-                            <input placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
-                            <input placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
-                            <input :placeholder="isNaturalPersonVehicleOwner ? 'CNP' : 'CUI'" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
-                            <input placeholder="Email" type="email" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                            <input placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.vehicleOwnerLastName" placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                            <input v-model="formData.vehicleOwnerFirstName" placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                            <input v-model="vehicleOwnerTaxId" :placeholder="isNaturalPersonVehicleOwner ? 'CNP' : 'CUI'" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                            <input v-model="formData.vehicleOwnerEmail" placeholder="Email" type="email" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                            <input v-model="formData.vehicleOwnerPhone" placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
                         </div>
 
                         <div class="space-y-6 pt-4">
                             <h3 class="font-bold text-green-500 uppercase text-xs tracking-[0.2em]">Adresă proprietar</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="relative group">
-                                    <select v-model="countyCodeVehicleOwner" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                    <select v-model="formData.vehicleOwnerCountyCode" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
                                         <option value="" disabled class="bg-slate-900 text-slate-400">Alege județ</option>
                                         <option v-for="county in counties" :key="county.code" :value="county.code" class="bg-slate-900 text-white">{{county.name}}</option>
                                     </select>
                                     <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
                                 </div>
                                 <div class="relative group">
-                                    <select v-model="cityVehicleOwner" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
+                                    <select v-model="formData.vehicleOwnerCity" class="w-full appearance-none rounded-2xl bg-slate-950/60 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer">
                                         <option value="" disabled class="bg-slate-900 text-slate-400">Alege orașul</option>
                                         <option v-for="city in citiesVehicleOwner" :key="city.siruta" :value="{ siruta: city.siruta, name: city.name }" class="bg-slate-900 text-white">{{city.name}}</option>
                                     </select>
@@ -249,17 +322,17 @@ watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwn
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <input placeholder="Strada" class="col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Bloc" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Scara" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Apartament" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Etaj" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
-                                <input placeholder="Cod postal" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.vehicleOwnerStreet" placeholder="Strada" class="col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.vehicleOwnerHouseNumber" placeholder="Numar" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.vehicleOwnerBuilding" placeholder="Bloc" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.vehicleOwnerStaircase" placeholder="Scara" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.vehicleOwnerApartment" placeholder="Apartament" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.vehicleOwnerFloor" placeholder="Etaj" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
+                                <input v-model="formData.vehicleOwnerPostcode" placeholder="Cod postal" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
                             </div>
                         </div>
                     </section>
-
+ss
                     <section class="space-y-6">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4">Date soferi</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -383,7 +456,7 @@ watch(countyCodeVehicleOwner, async () => getCitiesByCountyCode(citiesVehicleOwn
                         </div>
 
                         <label class="flex items-center gap-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800 cursor-pointer hover:bg-slate-950/60 transition-all">
-                            <input v-model="isAcquiredFromRomanianDealer" type="checkbox" class="h-6 w-6 rounded border-slate-700 bg-slate-800 text-green-500 focus:ring-green-500 accent-green-600 shadow-sm" />
+                            <input v-model="formData.isAcquiredFromRomanianDealer" type="checkbox" class="h-6 w-6 rounded border-slate-700 bg-slate-800 text-green-500 focus:ring-green-500 accent-green-600 shadow-sm" />
                             <span class="text-sm font-medium text-slate-300">Vehicul achiziționat de la dealer român</span>
                         </label>
                     </section>
