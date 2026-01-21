@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// TODO controllers
+
 // TODO move all custom routes to /api.php
 
 Route::get("/", function () {
@@ -74,7 +76,6 @@ Route::post("/offers", function () {
             "policyholder" => [
                 "businessName" => "Life is Hard",
                 "companyRegistryNumber" => "J12/1403/2004",
-                // TODO
                 "caenCode" => "6202",
                 "lastName" => "Pop",
                 "firstName" => "Vasile",
@@ -98,7 +99,6 @@ Route::post("/offers", function () {
                 "owner" => [
                     "businessName" => "Life is Hard",
                     "companyRegistryNumber" => "J12/1403/2004",
-                    // TODO
                     "caenCode" => "6202",
                     "lastName" => "Pop",
                     "firstName" => "Vasile",
@@ -146,7 +146,6 @@ Route::post("/offers", function () {
                 "identification" => [
                     "idNumber" => "H123456"
                 ],
-                // TODO
                 "currentMileage" => 180000
             ],
             "additionalData" => [

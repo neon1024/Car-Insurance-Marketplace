@@ -260,10 +260,11 @@ watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesBy
                             <template v-if="!isNaturalPersonPolicyHolder">
                                 <input v-model="formData.policyHolderBusinessName" placeholder="Nume firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
                                 <input v-model="formData.policyHolderBusinessRegisterNumber" placeholder="Număr registru firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                                <input v-model="formData.policyHolderBusinessCAENCode" placeholder="Cod CAEN firmă" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
                             </template>
                             <input v-model="formData.policyHolderLastName" placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
                             <input v-model="formData.policyHolderFirstName" placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                            <input v-model="policyHolderTaxId" :placeholder="isNaturalPersonPolicyHolder ? 'CNP' : 'CUI'" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                            <input v-model="policyHolderTaxId" :placeholder="isNaturalPersonPolicyHolder ? 'CNP' : 'CUI'" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
                             <input v-model="formData.policyHolderEmail" placeholder="Email" type="email" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
                             <input v-model="formData.policyHolderPhone" placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
 
@@ -320,10 +321,11 @@ watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesBy
                             <template v-if="!isNaturalPersonVehicleOwner">
                                 <input v-model="formData.vehicleOwnerBusinessName" placeholder="Companie" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
                                 <input v-model="formData.vehicleOwnerBusinessRegisterNumber" placeholder="Cod registru" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                                <input v-model="formData.vehicleOwnerBusinessCAENCode" placeholder="Cod CAEN" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
                             </template>
                             <input v-model="formData.vehicleOwnerLastName" placeholder="Nume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
                             <input v-model="formData.vehicleOwnerFirstName" placeholder="Prenume" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
-                            <input v-model="vehicleOwnerTaxId" :placeholder="isNaturalPersonVehicleOwner ? 'CNP' : 'CUI'" class="md:col-span-2 w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
+                            <input v-model="vehicleOwnerTaxId" :placeholder="isNaturalPersonVehicleOwner ? 'CNP' : 'CUI'" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50" />
                             <input v-model="formData.vehicleOwnerEmail" placeholder="Email" type="email" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
                             <input v-model="formData.vehicleOwnerPhone" placeholder="Telefon" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none" />
                         </div>
@@ -370,7 +372,7 @@ watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesBy
                         </div>
                     </section>
 
-                    <section class="space-y-8">
+                    <section class="space-y-8 mb-8">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 tracking-tight">Date vehicul</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <input v-model="formData.vehicleLicensePlate" placeholder="Numar inmatriculare" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white uppercase outline-none focus:border-green-500/50" />
@@ -441,50 +443,55 @@ watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesBy
                                 <div class="space-y-1"><label class="text-[10px] uppercase text-slate-500 font-bold ml-1">Locuri</label>
                                     <input v-model="formData.vehicleSeats" type="number" placeholder="Nr." class="w-full rounded-xl bg-slate-950/40 border border-slate-700/50 px-4 py-3 text-white outline-none" /></div>
                             </div>
+                        </div>
+                    </section>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-                                <div class="space-y-1">
-                                    <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Combustibil</label>
-                                    <div class="relative">
-                                        <select v-model="formData.vehicleFuelType" class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
-                                            <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege...</option>
-                                            <option value="diesel" class="bg-slate-900 text-white">Diesel</option>
-                                            <option value="petrol" class="bg-slate-900 text-white">Benzină</option>
-                                            <option value="hybrid" class="bg-slate-900 text-white">Hybrid</option>
-                                            <option value="electric" class="bg-slate-900 text-white">Electric</option>
-                                        </select>
-                                        <span class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-1">
-                                    <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Prima inregistrare</label>
-                                    <input v-model="formData.vehicleFirstRegistration" type="date" style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                                </div>
-
-                                <div class="space-y-1">
-                                    <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Tip Uz</label>
-                                    <div class="relative">
-                                        <select v-model="formData.vehicleUsageType" class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
-                                            <option value="" disabled selected class="bg-slate-900 text-slate-400">Personal...</option>
-                                            <option value="personal" class="bg-slate-900 text-white">Personal</option>
-                                        </select>
-                                        <span class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-1">
-                                    <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Serie CIV</label>
-                                    <input v-model="formData.vehicleCIV" placeholder="Ex: X123456" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
-                                </div>
+                    <div class="w-full grid grid-cols-1 md:grid-cols-4 gap-6 items-end mb-8">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Combustibil</label>
+                            <div class="relative">
+                                <select v-model="formData.vehicleFuelType" class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
+                                    <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege...</option>
+                                    <option value="diesel" class="bg-slate-900 text-white">Diesel</option>
+                                    <option value="petrol" class="bg-slate-900 text-white">Benzină</option>
+                                    <option value="hybrid" class="bg-slate-900 text-white">Hybrid</option>
+                                    <option value="electric" class="bg-slate-900 text-white">Electric</option>
+                                </select>
+                                <span class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
                             </div>
                         </div>
 
-                        <label class="flex items-center gap-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800 cursor-pointer hover:bg-slate-950/60 transition-all">
-                            <input v-model="formData.isAcquiredFromRomanianDealer" type="checkbox" class="h-6 w-6 rounded border-slate-700 bg-slate-800 text-green-500 focus:ring-green-500 accent-green-600 shadow-sm" />
-                            <span class="text-sm font-medium text-slate-300">Vehicul achiziționat de la dealer român</span>
-                        </label>
-                    </section>
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Prima inregistrare</label>
+                            <input v-model="formData.vehicleFirstRegistration" type="date" style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Tip Uz</label>
+                            <div class="relative">
+                                <select v-model="formData.vehicleUsageType" class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 cursor-pointer transition-all">
+                                    <option value="" disabled selected class="bg-slate-900 text-slate-400">Personal...</option>
+                                    <option value="personal" class="bg-slate-900 text-white">Personal</option>
+                                </select>
+                                <span class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-green-500 text-xs">▼</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Serie CIV</label>
+                            <input v-model="formData.vehicleCIV" placeholder="Ex: X123456" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Kilometraj</label>
+                        <input v-model="formData.vehicleCurrentMileage" type="number" placeholder="Km" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                    </div>
+
+                    <label class="mb-12 flex items-center gap-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800 cursor-pointer hover:bg-slate-950/60 transition-all">
+                        <input v-model="formData.isAcquiredFromRomanianDealer" type="checkbox" class="h-6 w-6 rounded border-slate-700 bg-slate-800 text-green-500 focus:ring-green-500 accent-green-600 shadow-sm" />
+                        <span class="text-sm font-medium text-slate-300">Vehicul achiziționat de la dealer român</span>
+                    </label>
 
                     <div class="pt-8">
                         <button type="submit" @click="handleGetOffers" class="relative group w-full overflow-hidden rounded-2xl bg-green-500 px-8 py-6 text-xl font-black text-slate-950 transition-all hover:bg-green-400 hover:scale-[1.01] active:scale-[0.98] shadow-[0_0_50px_rgba(34,197,94,0.3)]">
