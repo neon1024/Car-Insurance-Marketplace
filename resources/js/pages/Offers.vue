@@ -357,7 +357,7 @@ watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesBy
                             </div>
                         </div>
                     </section>
-ss
+
                     <section class="space-y-6">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4">Date soferi</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
