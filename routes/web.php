@@ -56,12 +56,69 @@ Route::get("/offers", function () {
 Route::post("/offers", function () {
     $token = session("auth_token");
 
+    if(!$token) {
+        return redirect()->route("login.page");
+    }
+
+    // TODO validate
+    request()->validate([
+        "policyHolderBusinessName" => "required|string"
+    ]);
+
+    // TODO send only the request()->all() / body into the request
+
+    $insurer = request("insurer");
+
+    $policyHolderBusinessName = request("policyHolderBusinessName");
+    $policyHolderBusinessRegisterNumber = request("policyHolderBusinessRegisterNumber");
+    $policyHolderBusinessCAENCode = request("policyHolderBusinessCAENCode");
+    $policyHolderBusinessCUI = request("policyHolderBusinessCUI");
+
+    $policyHolderLastName = request("policyHolderLastName");
+    $policyHolderFirstName = request("policyHolderFirstName");
+    $policyHolderCNP = request("policyHolderCNP");
+    $policyHolderEmail = request("policyHolderEmail");
+    $policyHolderPhone = request("policyHolderPhone");
+
+    $policyHolderCountyCode = request("policyHolderCountyCode");
+    $policyHolderCity = request("policyHolderCity");
+    $policyHolderCityCode = request("policyHolderCityCode");
+    $policyHolderStreet = request("policyHolderStreet");
+    $policyHolderHouseNumber = request("policyHolderHouseNumber");
+    $policyHolderBuilding = request("policyHolderBuilding");
+    $policyHolderStaircase = request("policyHolderStaircase");
+    $policyHolderApartment = request("policyHolderApartment");
+    $policyHolderFloor = request("policyHolderFloor");
+    $policyHolderPostcode = request("policyHolderPostcode");
+
+    $vehicleOwnerBusinessName = request("vehicleOwnerBusinessName");
+    $vehicleOwnerBusinessRegisterNumber = request("vehicleOwnerBusinessRegisterNumber");
+    $vehicleOwnerBusinessCAENCode = request("vehicleOwnerBusinessCAENCode");
+    $vehicleOwnerBusinessCUI = request("vehicleOwnerBusinessCUI");
+
+    $vehicleOwnerLastName = request("vehicleOwnerLastName");
+    $vehicleOwnerFirstName = request("vehicleOwnerFirstName");
+    $vehicleOwnerCNP = request("vehicleOwnerCNP");
+    $vehicleOwnerEmail = request("vehicleOwnerEmail");
+    $vehicleOwnerPhone = request("vehicleOwnerPhone");
+
+    $vehicleOwnerCountyCode = request("vehicleOwnerCountyCode");
+    $vehicleOwnerCity = request("vehicleOwnerCity");
+    $vehicleOwnerCityCode = request("vehicleOwnerCityCode");
+    $vehicleOwnerStreet = request("vehicleOwnerStreet");
+    $vehicleOwnerHouseNumber = request("vehicleOwnerHouseNumber");
+    $vehicleOwnerBuilding = request("vehicleOwnerBuilding");
+    $vehicleOwnerStaircase = request("vehicleOwnerStaircase");
+    $vehicleOwnerApartment = request("vehicleOwnerApartment");
+    $vehicleOwnerFloor = request("vehicleOwnerFloor");
+    $vehicleOwnerPostcode = request("vehicleOwnerPostcode");
+
     // authentication fields must be empty because the auth is provided by the token
     // TODO get start date from user
     $request_body = [
         "provider" => [
             "organization" => [
-                "businessName" => "asirom"
+                "businessName" => $insurer
             ]
         ],
         "product" => [
