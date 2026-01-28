@@ -23,7 +23,6 @@ const snackbarText = ref("");
 
 // TODO add necessary fields for all insurers' requests
 const formData = ref({
-    insurer: "",
     insuranceStartDate: "",
     insuranceDurationInMonths: 12,
 
@@ -133,7 +132,7 @@ const validateFormData = () => {
     today.setHours(0, 0, 0, 0);
 
     const [year, month, day] = formData.value.insuranceStartDate.split('-').map(Number);
-    const selectedDate = new Date(year, month - 1, day); // months are 0-indexed
+    const selectedDate = new Date(year, month - 1, day); // months are 0 indexed
 
     if (selectedDate <= today) {
         snackbarText.value = "Data începerii trebuie să fie cel mai devreme mâine";
@@ -166,7 +165,6 @@ const handleGetOffers = () => {
 
     // TODO send only the request()->all in the request
     const data = {
-        insurer: formData.value.insurer,
         insuranceStartDate: formData.value.insuranceStartDate,
         insuranceDurationInMonths: formData.value.insuranceDurationInMonths,
 
@@ -236,13 +234,18 @@ const handleGetOffers = () => {
         vehicleFirstRegistration: formData.value.vehicleFirstRegistration,
         vehicleUsageType: formData.value.vehicleUsageType,
         vehicleCIV: formData.value.vehicleCIV,
-        vehicleCurrentMileage: parseInt(formData.value.vehicleCurrentMileage),
-        vehicleExpirationDatePti: formData.value.vehicleExpirationDatePti,
 
-        isAcquiredFromRomanianDealer: formData.value.isAcquiredFromRomanianDealer
+        vehicleCurrentMileage: parseInt(formData.value.vehicleCurrentMileage),
+
+        isAcquiredFromRomanianDealer: formData.value.isAcquiredFromRomanianDealer,
+        vehicleExpirationDatePti: formData.value.vehicleExpirationDatePti
     };
 
-    router.post("/offers", data);
+    router.post("/offers", data, {
+        headers: {
+            Token: token.value ?? ""
+        }
+    });
 }
 
 const getCounties = async () => {
@@ -275,6 +278,10 @@ const getCounties = async () => {
 }
 
 const getCitiesByCountyCode = async (cities, countyCode) => {
+    if(!countyCode) {
+        return;
+    }
+
     try {
         const response = await axios.get(`/api/cities/${countyCode}`, {
             headers: {
@@ -305,8 +312,8 @@ const getCitiesByCountyCode = async (cities, countyCode) => {
 
 getCounties();
 
-watch(async () => formData.value.policyHolderCountyCode, async () => getCitiesByCountyCode(citiesPolicyHolder, formData.value.policyHolderCountyCode));
-watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCountyCode(citiesVehicleOwner, formData.value.vehicleOwnerCountyCode));
+watch(() => formData.value.policyHolderCountyCode, async () => getCitiesByCountyCode(citiesPolicyHolder, formData.value.policyHolderCountyCode));
+watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCountyCode(citiesVehicleOwner, formData.value.vehicleOwnerCountyCode));
 
 </script>
 
@@ -325,26 +332,6 @@ watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesBy
                 <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-green-500/50 to-transparent"></div>
 
                 <div class="p-8 md:p-12 space-y-16">
-
-                    <section class="space-y-6">
-                        <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 tracking-tight">Asigurator</h2>
-                        <div class="relative group">
-                            <select v-model="formData.insurer" required class="w-full appearance-none rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 focus:ring-4 focus:ring-green-500/10 outline-none transition-all cursor-pointer">
-                                <option value="" disabled selected class="bg-slate-900 text-slate-400">Alege asigurator</option>
-                                <option value="allianz" class="bg-slate-900 text-white">Allianz</option>
-                                <option value="asirom" class="bg-slate-900 text-white">Asirom</option>
-                                <option value="axeria" class="bg-slate-900 text-white">Axeria</option>
-                                <option value="generali" class="bg-slate-900 text-white">Generali</option>
-                                <option value="groupama" class="bg-slate-900 text-white">Groupama</option>
-                                <option value="omniasig" class="bg-slate-900 text-white">Omniasig</option>
-                                <option value="hellas_autonom" class="bg-slate-900 text-white">Hellas Autonom</option>
-                                <option value="hellas_nextins" class="bg-slate-900 text-white">Hellas NextIns</option>
-                                <option value="grawe" class="bg-slate-900 text-white">Grawe</option>
-                                <option value="eazy_insure" class="bg-slate-900 text-white">Eazy Insure</option>
-                            </select>
-                            <span class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-green-500 opacity-70 group-hover:opacity-100 transition-opacity">▼</span>
-                        </div>
-                    </section>
 
                     <section class="space-y-6">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 tracking-tight">Date asigurare</h2>
@@ -599,9 +586,16 @@ watch(async () => formData.value.vehicleOwnerCountyCode, async () => getCitiesBy
                         </div>
                     </div>
 
-                    <div class="mb-8">
-                        <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Kilometraj</label>
-                        <input v-model="formData.vehicleCurrentMileage" type="number" placeholder="Km" required class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                    <div class="mb-8 flex w-full gap-6">
+                        <div class="mb-8 w-1/2">
+                            <label class="text-[10px] uppercase text-slate-500 font-bold ml-1 tracking-widest">Kilometraj</label>
+                            <input v-model="formData.vehicleCurrentMileage" type="number" placeholder="Km" required class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white outline-none focus:border-green-500/50 transition-all" />
+                        </div>
+
+                        <div class="mb-8 w-1/2">
+                            <label class="text-xs font-bold uppercase text-slate-500 ml-1 tracking-widest">Data expirarii ITP</label>
+                            <input v-model="formData.vehicleExpirationDatePti" type="date" required style="color-scheme: dark;" class="w-full rounded-2xl bg-slate-950/40 border border-slate-700/50 px-5 py-4 text-white focus:border-green-500 outline-none transition-all" />
+                        </div>
                     </div>
 
                     <label class="mb-12 flex items-center gap-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800 cursor-pointer hover:bg-slate-950/60 transition-all">

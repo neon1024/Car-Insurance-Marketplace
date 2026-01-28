@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    "rca_v2_api" => [
+        "base_url" => env("RCA_V2_API_URL"),
+        "account" => env("RCA_V2_API_ACCOUNT"),
+        "password" => env("RCA_V2_API_PASSWORD")
+    ]
+
 ];
