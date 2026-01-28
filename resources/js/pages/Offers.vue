@@ -91,6 +91,224 @@ const formData = ref({
     isAcquiredFromRomanianDealer: true
 });
 
+// TODO form data directly formatted as the request body
+const formData1 = ref({
+    "product": {
+        "motor": {
+            "startDate": "",
+            "termTime": 12
+        },
+        "policyholder": {
+            "businessName": "",
+            "companyRegistryNumber": "",
+            "caenCode": "",
+            "lastName": "",
+            "firstName": "",
+            "isForeignPerson": false,
+            "taxId": "",
+            "nationality": "RO",
+            "citizenship": "RO",
+            "gender": "",
+            "birthdate": "",
+            "email": "",
+            "mobileNumber": "",
+            "identification": {
+                "idType": "",
+                "idNumber": "",
+                "issueAuthority": "",
+                "issueDate": ""
+            },
+            "drivingLicense": {
+                "issueDate": ""
+            },
+            "address": {
+                "country": "",
+                "county": "",
+                "city": "",
+                "cityCode": "",
+                "street": "",
+                "houseNumber": "",
+                "building": "",
+                "floor": "",
+                "staircase": "",
+                "apartment": "",
+                "postcode": ""
+            },
+            "hasDisability": false,
+            "isRetired": false
+        },
+        "vehicle": {
+            "registrationType": "",
+            "owner": {
+                "businessName": "",
+                "companyRegistryNumber": "",
+                "caenCode": "",
+                "lastName": "",
+                "firstName": "",
+                "isForeignPerson": false,
+                "taxId": "",
+                "nationality": "RO",
+                "citizenship": "RO",
+                "gender": "",
+                "birthdate": "",
+                "email": "",
+                "mobileNumber": "",
+                "identification": {
+                    "idType": "",
+                    "idNumber": "",
+                    "issueAuthority": "",
+                    "issueDate": ""
+                },
+                "drivingLicense": {
+                    "issueDate": ""
+                },
+                "address": {
+                    "country": "RO",
+                    "county": "",
+                    "city": "",
+                    "cityCode": "",
+                    "street": "",
+                    "houseNumber": "",
+                    "building": "",
+                    "floor": "",
+                    "staircase": "",
+                    "apartment": "",
+                    "postcode": ""
+                },
+                "hasDisability": false,
+                "isRetired": false
+            },
+            "driver": [],
+            "licensePlate": "",
+            "vin": "",
+            "vehicleType": "",
+            "brand": "",
+            "model": "",
+            "yearOfConstruction": "",
+            "engineDisplacement": "",
+            "seats": "",
+            "enginePower": "",
+            "totalWeight": "",
+            "fuelType": "petrol",
+            "firstRegistration": "",
+            "usageType": "",
+            "currentMileage": "",
+            "hasMobilityModifications": false,
+            "isLeased": false,
+            "identification": {
+                "idNumber": ""
+            }
+        },
+        "additionalData": []
+    }
+});
+
+// test form data
+const formData2 = ref({
+    "product": {
+        "motor": {
+            "startDate": "2026-01-31",
+            "termTime": 12
+        },
+        "policyholder": {
+            "lastName": "Corcodel",
+            "firstName": "Gheorghe",
+            "isForeignPerson": false,
+            "taxId": "1620607151238",
+            "nationality": "RO",
+            "citizenship": "RO",
+            "gender": "m",
+            "birthdate": "1962-06-07",
+            "email": "comenzi1769157661@roviniete.ro",
+            "mobileNumber": "0717691576",
+            "identification": {
+                "idType": "CI",
+                "idNumber": "TZ790205",
+                "issueAuthority": "SPCLEPTM",
+                "issueDate": "2025-01-23"
+            },
+            "drivingLicense": {
+                "issueDate": "1982-01-01"
+            },
+            "address": {
+                "country": "RO",
+                "county": "TM",
+                "city": "LOVRIN",
+                "cityCode": 157549,
+                "street": "Principala",
+                "houseNumber": "625",
+                "building": "1",
+                "floor": "1",
+                "staircase": "",
+                "apartment": "",
+                "postcode": "307250"
+            },
+            "hasDisability": false,
+            "isRetired": false
+        },
+        "vehicle": {
+            "registrationType": "registered",
+            "owner": {
+                "lastName": "Corcodel",
+                "firstName": "Gheorghe",
+                "isForeignPerson": false,
+                "taxId": "1620607151238",
+                "nationality": "RO",
+                "citizenship": "RO",
+                "gender": "m",
+                "birthdate": "1962-06-07",
+                "email": "comenzi1769157661@roviniete.ro",
+                "mobileNumber": "0717691576",
+                "identification": {
+                    "idType": "CI",
+                    "idNumber": "TZ790205",
+                    "issueAuthority": "SPCLEPTM",
+                    "issueDate": "2025-01-23"
+                },
+                "drivingLicense": {
+                    "issueDate": "1982-01-01"
+                },
+                "address": {
+                    "country": "RO",
+                    "county": "TM",
+                    "city": "LOVRIN",
+                    "cityCode": 157549,
+                    "street": "Principala",
+                    "houseNumber": "625",
+                    "building": "1",
+                    "floor": "1",
+                    "staircase": "",
+                    "apartment": "",
+                    "postcode": "307250"
+                },
+                "hasDisability": false,
+                "isRetired": false
+            },
+            "driver": [],
+            "licensePlate": "TM23KPR",
+            "vin": "WVWZZZ3BZ3P447031",
+            "vehicleType": "M1",
+            "brand": "volkswagen",
+            "model": "passat",
+            "yearOfConstruction": 2003,
+            "engineDisplacement": 1896,
+            "seats": 5,
+            "enginePower": 96,
+            "totalWeight": 1970,
+            "fuelType": "petrol",
+            "firstRegistration": "2003-01-01",
+            "usageType": "personal",
+            "currentMileage": 120056,
+            "hasMobilityModifications": false,
+            "isLeased": false,
+            "identification": {
+                "idNumber": "O000000"
+            }
+        },
+        "additionalData": []
+    }
+});
+
 const policyHolderTaxId = computed({
     get() {
         return isNaturalPersonPolicyHolder.value ?
@@ -154,9 +372,16 @@ const validateFormData = () => {
 
 // TODO re route in backend to login when token / session expires
 const handleGetOffers = () => {
+    router.post("/offers", formData2.value);
+
+    return;
+
     if(!validateFormData()) {
         return;
     }
+
+    // TODO if normal person => remove company fields
+    // TODO if car is registered => remove license plate field
 
     // TODO send only the request()->all in the request
     const data = {
@@ -309,8 +534,9 @@ watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCounty
             <p class="mt-3 text-slate-400 font-medium">Completează datele de mai jos pentru a obține instant oferte de asigurare RCA</p>
         </header>
 
+        <!-- TODO remove novalidate -->
         <main class="max-w-4xl mx-auto px-6 pb-24">
-            <form @submit.prevent="handleGetOffers" class="relative overflow-hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl">
+            <form novalidate @submit.prevent="handleGetOffers" class="relative overflow-hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl">
 
                 <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-green-500/50 to-transparent"></div>
 

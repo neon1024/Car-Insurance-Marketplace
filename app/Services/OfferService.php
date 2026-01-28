@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 
@@ -32,16 +33,14 @@ class OfferService
         try {
             $token = $this->rcaV2ApiService->getToken();
 
-            $responses = Http::withoutVerifying()
-                ->withHeader("Token", $token)
-                ->pool(function (Pool $pool) use ($requestData) {
+            $responses = Http::pool(function (Pool $pool) use ($requestData, $token) {
                     $offersData = [];
 
                     foreach ($this->insurers as $insurer) {
                         $payload = $requestData;
                         $payload["provider"]["organization"]["businessName"] = $insurer;
 
-                        $offersData[$insurer] = $pool->post(
+                        $offersData[$insurer] = $pool->withoutVerifying()->withHeader("Token", $token)->timeout(3)->post(
                             $this->rcaV2ApiService->getBaseUrl() . "/offer",
                             $payload
                         );
@@ -50,27 +49,41 @@ class OfferService
                     return $offersData;
             });
 
-            $offers = [];
+            $offersData = [];
 
-            foreach($responses as $insurer => $response) {
-                $response_json = $response->json();
-
-                $error = $response_json["error"];
-
-                // TODO handle error
-                if($error) {
-                    $status = $response_json["status"];
-                    $message = $response_json["message"];
-
+            foreach ($responses as $response) {
+                // Handle connection exceptions
+                if ($response instanceof \Illuminate\Http\Client\ConnectionException) {
+                    $offersData[] = [
+                        'success' => false,
+                        'status' => null,
+                        'data' => null,
+                        'error' => 'Connection refused or timed out',
+                    ];
                     continue;
                 }
 
-                $data = $response_json["data"];
-
-                $offers[] = [
-                    "insurer" => $insurer,
-                    "offers" => $data["offers"]
+                /** @var \Illuminate\Http\Client\Response $response */
+                $offersData[] = [
+                    'success' => $response->successful(),
+                    'status' => $response->status(),
+                    'data' => $response->successful() ? [
+                        "insurer" => $response->json()['data']["provider"]["organization"]["businessName"],
+                        "offers" => $response->json()['data']['offers']
+                    ] ?? [] : null,
+                    'error' => $response->successful() ? null : $response->body(),
                 ];
+            }
+
+            $offers = [];
+
+            foreach($offersData as $offerData) {
+                if($offerData["success"]) {
+                    $offers[] = [
+                        "insurer" => $offerData["data"]["insurer"],
+                        "offers" => $offerData["data"]["offers"]
+                    ];
+                }
             }
 
             return $offers;

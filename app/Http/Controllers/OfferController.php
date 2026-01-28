@@ -18,6 +18,24 @@ class OfferController extends Controller
     public function index()
     {
         try {
+            // TODO validate
+            $request_body = request()->input();
+
+            $offersData = $this->offerService->getOffers($request_body);
+
+            return Inertia::render("OfferResults", [
+                'offers' => $offersData,
+            ]);
+            // TODO handle
+        } catch(Exception $error) {
+            return Inertia::render('OfferResults', [
+                "insurer" => "insurer",
+                "offers" => [],
+                'errors' => $error->getMessage() // send errors back to the component
+            ]);
+        }
+
+        try {
             // TODO handle errors on frontend
             $validated_request = request()->validate([
                 "insuranceStartDate" => [Rule::date()->format('Y-m-d'), Rule::date()->afterToday()],
