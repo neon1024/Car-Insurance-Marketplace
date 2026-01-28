@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OfferController;
+use App\Services\RcaV2ApiService;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -9,15 +9,34 @@ use Inertia\Inertia;
 
 // TODO move all custom routes to /api.php
 
+Route::get("/token", function() {
+    try {
+        $rca = new RcaV2ApiService();
+        $token = $rca->getToken();
+
+        return response()->json([
+            "error" => false,
+            "status" => 200,
+            "data" => $token
+        ]);
+    } catch(Exception $error) {
+        return response()->json([
+            "error" => true,
+            "status" => 500,
+            "message" => $error->getMessage()
+        ]);
+    }
+});
+
 Route::get("/", function () {
     return Inertia::render("Home");
 })->name("home.page");
 
+// TODO user auth
+
 Route::get("/login", function () {
     return Inertia::render("Login");
 })->name("login.page");
-
-Route::post("/login", [AuthController::class, "login"])->name("auth.login");
 
 Route::get("/offers", function () {
     return Inertia::render("Offers");

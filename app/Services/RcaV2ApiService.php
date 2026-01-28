@@ -93,20 +93,22 @@ class RcaV2ApiService
     }
 
     /**
-     * Make a GET request to the RCA API with automatic token
+     * Make a GET request to the RCA V2 API with automatic token
      */
     public function get(string $endpoint, array $query = [])
     {
-        return Http::withToken($this->getToken())
-            ->get(rtrim(config('services.rca_v2_api.base_url'), "/") . "/" . ltrim($endpoint, "/"), $query);
+        return Http::withoutVerifying()
+            ->withHeader("Token", $this->getToken())
+            ->get(rtrim($this->getBaseUrl(), "/") . "/" . ltrim($endpoint, "/"), $query);
     }
 
     /**
-     * Make a POST request to the RCA API with automatic token
+     * Make a POST request to the RCA V2 API with automatic token
      */
     public function post(string $endpoint, array $payload = [])
     {
-        return Http::withToken($this->getToken())
-            ->post(rtrim(config('services.rca_v2_api.base_url'), "/") . "/" . ltrim($endpoint, "/"), $payload);
+        return Http::withoutVerifying()
+            ->withHeader("Token", $this->getToken())
+            ->post(rtrim($this->getBaseUrl(), "/") . "/" . ltrim($endpoint, "/"), $payload);
     }
 }

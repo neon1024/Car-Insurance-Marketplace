@@ -1,16 +1,9 @@
 <script setup lang="ts">
 
-import { router, usePage } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import axios from 'axios';
-import { PageProps } from '@/types/inertia';
 import { computed, ref, watch } from 'vue';
 import Snackbar from '@/components/Snackbar.vue';
-
-const page = usePage<PageProps>();
-
-// TODO remove
-// TODO also remove any token sent from frontend
-const token = computed(() => page.props.session.token);
 
 const counties = ref<Array<{ code: string; name: string }>>([]);
 
@@ -243,20 +236,12 @@ const handleGetOffers = () => {
         vehicleExpirationDatePti: formData.value.vehicleExpirationDatePti
     };
 
-    router.post("/offers", data, {
-        headers: {
-            Token: token.value ?? ""
-        }
-    });
+    router.post("/offers", data);
 }
 
 const getCounties = async () => {
     try {
-        const response = await axios.get("/api/counties", {
-            headers: {
-                Token: token.value
-            }
-        });
+        const response = await axios.get("/api/counties");
 
         const data = response.data;
 
@@ -285,11 +270,7 @@ const getCitiesByCountyCode = async (cities, countyCode) => {
     }
 
     try {
-        const response = await axios.get(`/api/cities/${countyCode}`, {
-            headers: {
-                Token: token.value
-            }
-        });
+        const response = await axios.get(`/api/cities/${countyCode}`);
 
         const data = response.data;
 
