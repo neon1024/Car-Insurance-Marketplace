@@ -9,25 +9,6 @@ use Inertia\Inertia;
 
 // TODO move all custom routes to /api.php
 
-Route::get("/token", function() {
-    try {
-        $rca = new RcaV2ApiService();
-        $token = $rca->getToken();
-
-        return response()->json([
-            "error" => false,
-            "status" => 200,
-            "data" => $token
-        ]);
-    } catch(Exception $error) {
-        return response()->json([
-            "error" => true,
-            "status" => 500,
-            "message" => $error->getMessage()
-        ]);
-    }
-});
-
 Route::get("/", function () {
     return Inertia::render("Home");
 })->name("home.page");
