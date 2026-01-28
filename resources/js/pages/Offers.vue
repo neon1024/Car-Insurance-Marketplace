@@ -8,6 +8,8 @@ import Snackbar from '@/components/Snackbar.vue';
 
 const page = usePage<PageProps>();
 
+// TODO remove
+// TODO also remove any token sent from frontend
 const token = computed(() => page.props.session.token);
 
 const counties = ref<Array<{ code: string; name: string }>>([]);

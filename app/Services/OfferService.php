@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 
 class OfferService
 {
+    private RcaV2ApiService $rcaV2ApiService;
+
     /** @var string[] **/
     private array $insurers = [
         "allianz",
@@ -22,8 +24,14 @@ class OfferService
         "eazy_insure"
     ];
 
-    public function getOffers($requestData, $token) {
+    public function __construct(RcaV2ApiService $rcaV2ApiService) {
+        $this->rcaV2ApiService = $rcaV2ApiService;
+    }
+
+    public function getOffers($requestData) {
         try {
+            $token = $this->rcaV2ApiService->getToken();
+
             $responses = Http::withoutVerifying()
                 ->withHeader("Token", $token)
                 ->pool(function (Pool $pool) use ($requestData) {
@@ -34,8 +42,9 @@ class OfferService
                         $payload["provider"]["organization"]["businessName"] = $insurer;
 
                         $offersData[$insurer] = $pool->post(
-                            "https://rca-qa.api.lifeishard.ro/offer",
-                            $payload);
+                            $this->rcaV2ApiService->getBaseUrl() . "/offer",
+                            $payload
+                        );
                     }
 
                     return $offersData;
@@ -47,11 +56,13 @@ class OfferService
                 $response_json = $response->json();
 
                 $error = $response_json["error"];
-                $status = $response_json["status"];
 
                 // TODO handle error
                 if($error) {
+                    $status = $response_json["status"];
                     $message = $response_json["message"];
+
+                    continue;
                 }
 
                 $data = $response_json["data"];

@@ -17,13 +17,6 @@ class OfferController extends Controller
 
     public function index()
     {
-        $token = request()->header("Token");
-
-        // TODO call auth api
-        if(!$token) {
-            return redirect()->route("login.page");
-        }
-
         try {
             // TODO handle errors on frontend
             $validated_request = request()->validate([
@@ -296,7 +289,7 @@ class OfferController extends Controller
                 ]
             ];
 
-            $offersData = $this->offerService->getOffers($request_body, $token);
+            $offersData = $this->offerService->getOffers($request_body);
 
             return Inertia::render("OfferResults", $offersData);
         } catch(ValidationException $error) {

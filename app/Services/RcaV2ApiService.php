@@ -78,6 +78,13 @@ class RcaV2ApiService
     }
 
     /**
+     * Get base url of the API
+     */
+    public function getBaseUrl(): string {
+        return rtrim(config("services.rca_v2_api.base_url"), "/");
+    }
+
+    /**
      * Clear cached token data
      */
     public function clear(): void
@@ -91,7 +98,7 @@ class RcaV2ApiService
     public function get(string $endpoint, array $query = [])
     {
         return Http::withToken($this->getToken())
-            ->get(config('services.rca_v2_api.base_url') . "/" . ltrim($endpoint, "/"), $query);
+            ->get(rtrim(config('services.rca_v2_api.base_url'), "/") . "/" . ltrim($endpoint, "/"), $query);
     }
 
     /**
@@ -100,6 +107,6 @@ class RcaV2ApiService
     public function post(string $endpoint, array $payload = [])
     {
         return Http::withToken($this->getToken())
-            ->post(config('services.rca_v2_api.base_url') . "/" . ltrim($endpoint, "/"), $payload);
+            ->post(rtrim(config('services.rca_v2_api.base_url'), "/") . "/" . ltrim($endpoint, "/"), $payload);
     }
 }
