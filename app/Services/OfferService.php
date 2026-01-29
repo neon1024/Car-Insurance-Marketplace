@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Exception;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 
@@ -49,6 +48,7 @@ class OfferService
                     return $offersData;
             });
 
+            // TODO rework
             $offersData = [];
 
             foreach ($responses as $response) {
@@ -86,6 +86,7 @@ class OfferService
                 }
             }
 
+            // TODO returns 5 but dd shows 3?
             return $offers;
         } catch(Exception $error) {
             throw $error;

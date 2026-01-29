@@ -19,308 +19,75 @@ class OfferController extends Controller
     {
         try {
             // TODO validate
-            $request_body = request()->input();
+            $validated = request()->validate([
+                'product' => 'required|array',
+                'product.motor' => 'required|array',
+                'product.motor.startDate' => 'required|date|date_format:Y-m-d|after_or_equal:today',
+                'product.motor.termTime' => 'required|integer|min:1|max:12',
 
-            $offersData = $this->offerService->getOffers($request_body);
+                'product.policyholder' => 'required|array',
+                'product.policyholder.lastName' => 'sometimes|string',
+                'product.policyholder.firstName' => 'sometimes|string',
+                'product.policyholder.isForeignPerson' => 'required|boolean',
+                'product.policyholder.taxId' => 'required|string',
+                'product.policyholder.nationality' => 'required|string|size:2',
+                'product.policyholder.citizenship' => 'required|string|size:2',
+                'product.policyholder.gender' => 'required|string|in:m,f',
+                'product.policyholder.birthdate' => 'required|date_format:Y-m-d',
+                'product.policyholder.email' => 'sometimes|email',
+                'product.policyholder.mobileNumber' => 'sometimes|string',
+
+                'product.policyholder.identification' => 'sometimes|array',
+                'product.policyholder.identification.idType' => 'sometimes|string',
+                'product.policyholder.identification.idNumber' => 'sometimes|string',
+                'product.policyholder.identification.issueAuthority' => 'sometimes|string',
+                'product.policyholder.identification.issueDate' => 'sometimes|date_format:Y-m-d',
+
+                'product.policyholder.address' => 'required|array',
+                'product.policyholder.address.country' => 'required|string',
+                'product.policyholder.address.county' => 'required|string',
+                'product.policyholder.address.city' => 'required|string',
+                'product.policyholder.address.cityCode' => 'required|integer',
+                'product.policyholder.address.street' => 'required|string',
+                'product.policyholder.address.houseNumber' => 'required|string',
+                'product.policyholder.address.postcode' => 'required|string',
+
+                'product.policyholder.hasDisability' => 'sometimes|boolean',
+                'product.policyholder.isRetired' => 'sometimes|boolean',
+
+                'product.vehicle' => 'required|array',
+                'product.vehicle.registrationType' => 'required|string',
+                'product.vehicle.licensePlate' => 'sometimes|string',
+                'product.vehicle.vin' => 'required|string',
+                'product.vehicle.vehicleType' => 'required|string',
+                'product.vehicle.brand' => 'required|string',
+                'product.vehicle.model' => 'required|string',
+                'product.vehicle.yearOfConstruction' => 'required|integer|min:1900|max:2100',
+                'product.vehicle.engineDisplacement' => 'required|integer|min:1',
+                'product.vehicle.seats' => 'required|integer|min:1',
+                'product.vehicle.enginePower' => 'required|integer|min:1',
+                'product.vehicle.totalWeight' => 'required|integer|min:1',
+                'product.vehicle.fuelType' => 'required|string',
+                'product.vehicle.firstRegistration' => 'required|date_format:Y-m-d|before_or_equal:today',
+                'product.vehicle.usageType' => 'required|string',
+                'product.vehicle.currentMileage' => 'required|integer|min:0',
+                'product.vehicle.hasMobilityModifications' => 'required|boolean',
+                'product.vehicle.isLeased' => 'required|boolean',
+
+                'product.vehicle.identification' => 'required|array',
+                'product.vehicle.identification.idNumber' => 'required|string',
+            ]);
+
+            $offersData = $this->offerService->getOffers($validated);
 
             return Inertia::render("OfferResults", [
                 'offers' => $offersData,
             ]);
             // TODO handle
-        } catch(Exception $error) {
+        } catch (Exception $error) {
             return Inertia::render('OfferResults', [
-                "insurer" => "insurer",
                 "offers" => [],
-                'errors' => $error->getMessage() // send errors back to the component
-            ]);
-        }
-
-        try {
-            // TODO handle errors on frontend
-            $validated_request = request()->validate([
-                "insuranceStartDate" => [Rule::date()->format('Y-m-d'), Rule::date()->afterToday()],
-                "insuranceDurationInMonths" => "required|numeric|between:1,12",
-
-                "policyHolderBusinessName" => "nullable|string",
-                "policyHolderBusinessRegisterNumber" => "nullable|string",
-                "policyHolderBusinessCAENCode" => "nullable|numeric",
-                "policyHolderBusinessCUI" => "nullable|string",
-
-                "policyHolderLastName" => "required|string",
-                "policyHolderFirstName" => "required|string",
-                "policyHolderCNP" => "nullable|string",
-                "policyHolderEmail" => "nullable|email",
-                "policyHolderPhone" => "nullable|string",
-
-                "policyHolderCountyCode" => "required|string",
-                "policyHolderCity" => "required|string",
-                "policyHolderCityCode" => "required|numeric",
-                "policyHolderStreet" => "required|string",
-                "policyHolderHouseNumber" => "required|string",
-                "policyHolderBuilding" => "required|string",
-                "policyHolderStaircase" => "required|string",
-                "policyHolderApartment" => "required|string",
-                "policyHolderFloor" => "required|string",
-                "policyHolderPostcode" => "required|string",
-
-                "vehicleOwnerBusinessName" => "nullable|string",
-                "vehicleOwnerBusinessRegisterNumber" => "nullable|string",
-                "vehicleOwnerBusinessCAENCode" => "nullable|numeric",
-                "vehicleOwnerBusinessCUI" => "nullable|string",
-
-                "vehicleOwnerLastName" => "required|string",
-                "vehicleOwnerFirstName" => "required|string",
-                "vehicleOwnerCNP" => "nullable|string",
-                "vehicleOwnerEmail" => "nullable|email",
-                "vehicleOwnerPhone" => "nullable|string",
-
-                "vehicleOwnerCountyCode" => "required|string",
-                "vehicleOwnerCity" => "required|string",
-                "vehicleOwnerCityCode" => "required|numeric",
-                "vehicleOwnerStreet" => "required|string",
-                "vehicleOwnerHouseNumber" => "required|string",
-                "vehicleOwnerBuilding" => "required|string",
-                "vehicleOwnerStaircase" => "required|string",
-                "vehicleOwnerApartment" => "required|string",
-                "vehicleOwnerFloor" => "required|string",
-                "vehicleOwnerPostcode" => "required|string",
-
-                "driverLastName" => "required|string",
-                "driverFirstName" => "required|string",
-                "driverCNP" => "required|string",
-                "driverIDSeries" => "required|string",
-                "driverIDNumber" => "required|string",
-                "driverPhone" => "nullable|string",
-
-                "vehicleLicensePlate" => "required|string",
-                "vehicleRegistrationType" => "required|string",
-                "vehicleVIN" => "required|string",
-                "vehicleType" => "required|string",
-                "vehicleBrand" => "required|string",
-                "vehicleModel" => "required|string",
-                "vehicleYearOfConstruction" => "required|numeric",
-                "vehicleEngineDisplacement" => "required|numeric",
-                "vehicleEnginePower" => "required|numeric",
-                "vehicleTotalWeight" => "required|numeric",
-                "vehicleSeats" => "required|numeric",
-                "vehicleFuelType" => "required|string",
-                "vehicleFirstRegistration" => ["required", Rule::date()->format("Y-m-d")],
-                "vehicleUsageType" => "required|string",
-                "vehicleCIV" => "required|string",
-
-                "vehicleCurrentMileage" => "required|numeric|min:1",
-
-                "vehicleExpirationDatePti" => ["required", Rule::date()->format("Y-m-d")],
-                "isAcquiredFromRomanianDealer" => "required|boolean"
-            ]);
-
-            // TODO send only the request()->all() / body into the request
-
-            // insurance
-            $insuranceStartDate = $validated_request["insuranceStartDate"];
-            $insuranceDurationInMonths = $validated_request["insuranceDurationInMonths"];
-
-            // policyholder
-            // if company
-            $policyHolderBusinessName = $validated_request["policyHolderBusinessName"];
-            $policyHolderBusinessRegisterNumber = $validated_request["policyHolderBusinessRegisterNumber"];
-            $policyHolderBusinessCAENCode = $validated_request["policyHolderBusinessCAENCode"];
-            $policyHolderBusinessCUI = $validated_request["policyHolderBusinessCUI"];
-
-            // policyholder
-            // if person
-            $policyHolderLastName = $validated_request["policyHolderLastName"];
-            $policyHolderFirstName = $validated_request["policyHolderFirstName"];
-            $policyHolderCNP = $validated_request["policyHolderCNP"];
-            $policyHolderEmail = $validated_request["policyHolderEmail"];
-            $policyHolderPhone = $validated_request["policyHolderPhone"];
-
-            // policyholder address
-            $policyHolderCountyCode = $validated_request["policyHolderCountyCode"];
-            $policyHolderCity = $validated_request["policyHolderCity"];
-            $policyHolderCityCode = $validated_request["policyHolderCityCode"];
-            $policyHolderStreet = $validated_request["policyHolderStreet"];
-            $policyHolderHouseNumber = $validated_request["policyHolderHouseNumber"];
-            $policyHolderBuilding = $validated_request["policyHolderBuilding"];
-            $policyHolderStaircase = $validated_request["policyHolderStaircase"];
-            $policyHolderApartment = $validated_request["policyHolderApartment"];
-            $policyHolderFloor = $validated_request["policyHolderFloor"];
-            $policyHolderPostcode = $validated_request["policyHolderPostcode"];
-
-            // vehicle owner
-            $vehicleOwnerBusinessName = $validated_request["vehicleOwnerBusinessName"];
-            $vehicleOwnerBusinessRegisterNumber = $validated_request["vehicleOwnerBusinessRegisterNumber"];
-            $vehicleOwnerBusinessCAENCode = $validated_request["vehicleOwnerBusinessCAENCode"];
-            $vehicleOwnerBusinessCUI = $validated_request["vehicleOwnerBusinessCUI"];
-
-            $vehicleOwnerLastName = $validated_request["vehicleOwnerLastName"];
-            $vehicleOwnerFirstName = $validated_request["vehicleOwnerFirstName"];
-            $vehicleOwnerCNP = $validated_request["vehicleOwnerCNP"];
-            $vehicleOwnerEmail = $validated_request["vehicleOwnerEmail"];
-            $vehicleOwnerPhone = $validated_request["vehicleOwnerPhone"];
-
-            $vehicleOwnerCountyCode = $validated_request["vehicleOwnerCountyCode"];
-            $vehicleOwnerCity = $validated_request["vehicleOwnerCity"];
-            $vehicleOwnerCityCode = $validated_request["vehicleOwnerCityCode"];
-            $vehicleOwnerStreet = $validated_request["vehicleOwnerStreet"];
-            $vehicleOwnerHouseNumber = $validated_request["vehicleOwnerHouseNumber"];
-            $vehicleOwnerBuilding = $validated_request["vehicleOwnerBuilding"];
-            $vehicleOwnerStaircase = $validated_request["vehicleOwnerStaircase"];
-            $vehicleOwnerApartment = $validated_request["vehicleOwnerApartment"];
-            $vehicleOwnerFloor = $validated_request["vehicleOwnerFloor"];
-            $vehicleOwnerPostcode = $validated_request["vehicleOwnerPostcode"];
-
-            // drivers
-            $driverLastName = $validated_request["driverLastName"];
-            $driverFirstName = $validated_request["driverFirstName"];
-            $driverCNP = $validated_request["driverCNP"];
-            $driverIDSeries = $validated_request["driverIDSeries"];
-            $driverIDNumber = $validated_request["driverIDNumber"];
-            $driverId = $driverIDSeries . $driverIDNumber;
-            $driverPhone = $validated_request["driverPhone"];
-
-            // vehicle
-            $vehicleLicensePlate = $validated_request["vehicleLicensePlate"];
-            $vehicleRegistrationType = $validated_request["vehicleRegistrationType"];
-            $vehicleVIN = $validated_request["vehicleVIN"];
-            $vehicleType = $validated_request["vehicleType"];
-            $vehicleBrand = $validated_request["vehicleBrand"];
-            $vehicleModel = $validated_request["vehicleModel"];
-            $vehicleYearOfConstruction = $validated_request["vehicleYearOfConstruction"];
-            $vehicleEngineDisplacement = $validated_request["vehicleEngineDisplacement"];
-            $vehicleEnginePower = $validated_request["vehicleEnginePower"];
-            $vehicleTotalWeight = $validated_request["vehicleTotalWeight"];
-            $vehicleSeats = $validated_request["vehicleSeats"];
-            $vehicleFuelType = $validated_request["vehicleFuelType"];
-            $vehicleFirstRegistration = $validated_request["vehicleFirstRegistration"];
-            $vehicleUsageType = $validated_request["vehicleUsageType"];
-            $vehicleCIV = $validated_request["vehicleCIV"];
-            $vehicleCurrentMileage = $validated_request["vehicleCurrentMileage"];
-
-            // additional data
-            $vehicleExpirationDatePti = $validated_request["vehicleExpirationDatePti"];
-            $isAcquiredFromRomanianDealer = $validated_request["isAcquiredFromRomanianDealer"];
-
-            // authentication fields must be empty because the auth is provided by the token
-
-            // TODO if registration type is registered => no car license plate required
-            // TODO if normal person => no company data required + identification required
-            // TODO if company => no person name + no identification required
-            $request_body = [
-                "provider" => [
-                    "organization" => [
-                        "businessName" => ""
-                    ]
-                ],
-                "product" => [
-                    "motor" => [
-                        "startDate" => $insuranceStartDate,
-                        "termTime" => $insuranceDurationInMonths,
-                        "renewPolicy" => [
-                            "series" => "XX/XX/XX",
-                            "number" => 123456789
-                        ]
-                    ],
-                    "policyholder" => [
-                        "businessName" => $policyHolderBusinessName,
-                        "companyRegistryNumber" => $policyHolderBusinessRegisterNumber,
-                        "caenCode" => $policyHolderBusinessCAENCode,
-                        "lastName" => $policyHolderLastName,
-                        "firstName" => $policyHolderFirstName,
-                        "taxId" => $policyHolderBusinessCUI ?? $policyHolderCNP,
-                        "email" => $policyHolderEmail,
-                        "mobileNumber" => $policyHolderPhone,
-                        "address" => [
-                            "county" => $policyHolderCountyCode,
-                            "city" => $policyHolderCity,
-                            "cityCode" => $policyHolderCityCode,
-                            "street" => $policyHolderStreet,
-                            "houseNumber" => $policyHolderHouseNumber,
-                            "building" => $policyHolderBuilding,
-                            "staircase" => $policyHolderStaircase,
-                            "apartment" => $policyHolderApartment,
-                            "floor" => $policyHolderFloor,
-                            "postcode" => $policyHolderPostcode
-                        ]
-                    ],
-                    "vehicle" => [
-                        "owner" => [
-                            "businessName" => $vehicleOwnerBusinessName,
-                            "companyRegistryNumber" => $vehicleOwnerBusinessRegisterNumber,
-                            "caenCode" => $vehicleOwnerBusinessCAENCode,
-                            "lastName" => $vehicleOwnerLastName,
-                            "firstName" => $vehicleOwnerFirstName,
-                            "taxId" => $vehicleOwnerBusinessCUI ?? $vehicleOwnerCNP,
-                            "email" => $vehicleOwnerEmail,
-                            "mobileNumber" => $vehicleOwnerPhone,
-                            "address" => [
-                                "county" => $vehicleOwnerCountyCode,
-                                "city" => $vehicleOwnerCity,
-                                "cityCode" => $vehicleOwnerCityCode,
-                                "street" => $vehicleOwnerStreet,
-                                "houseNumber" => $vehicleOwnerHouseNumber,
-                                "building" => $vehicleOwnerBuilding,
-                                "staircase" => $vehicleOwnerStaircase,
-                                "apartment" => $vehicleOwnerApartment,
-                                "floor" => $vehicleOwnerFloor,
-                                "postcode" => $vehicleOwnerPostcode
-                            ]
-                        ],
-                        "driver" => [
-                            [
-                                "lastName" => $driverLastName,
-                                "firstName" => $driverFirstName,
-                                "taxId" => $driverCNP,
-                                "identification" => [
-                                    "idNumber" => $driverId
-                                ],
-                                "mobileNumber" => $driverPhone
-                            ]
-                        ],
-                        "licensePlate" => $vehicleLicensePlate,
-                        "registrationType" => $vehicleRegistrationType,
-                        "vin" => $vehicleVIN,
-                        "vehicleType" => $vehicleType,
-                        "brand" => $vehicleBrand,
-                        "model" => $vehicleModel,
-                        "yearOfConstruction" => $vehicleYearOfConstruction,
-                        "engineDisplacement" => $vehicleEngineDisplacement,
-                        "enginePower" => $vehicleEnginePower,
-                        "totalWeight" => $vehicleTotalWeight,
-                        "seats" => $vehicleSeats,
-                        "fuelType" => $vehicleFuelType,
-                        "firstRegistration" => $vehicleFirstRegistration,
-                        "usageType" => $vehicleUsageType,
-                        "identification" => [
-                            "idNumber" => $vehicleCIV
-                        ],
-                        "currentMileage" => $vehicleCurrentMileage
-                    ],
-                    "additionalData" => [
-                        "product" => [
-                            "isAcquiredFromRomanianDealer" => $isAcquiredFromRomanianDealer,
-                            "vehicle" => [
-                                "expirationDatePti" => $vehicleExpirationDatePti
-                            ]
-                        ]
-                    ]
-                ]
-            ];
-
-            $offersData = $this->offerService->getOffers($request_body);
-
-            return Inertia::render("OfferResults", $offersData);
-        } catch(ValidationException $error) {
-            return Inertia::render('OfferResults', [
-                "insurer" => "insurer",
-                "offers" => [],
-                'errors' => $error->getMessage() // send errors back to the component
-            ]);
-        } catch(Exception $error) {
-            return Inertia::render('OfferResults', [
-                "insurer" => "insurer",
-                "offers" => [],
-                'errors' => $error->getMessage() // send errors back to the component
+                'errors' => $error->getMessage()
             ]);
         }
     }
