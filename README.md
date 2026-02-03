@@ -52,7 +52,7 @@ Responsive, component-based UI built for clarity, usability, and scalability.
 
 - RESTful API
 
-- PostgreSQL / MySQL
+- PostgreSQL / SQLite
 
 ### Frontend
 
@@ -73,7 +73,7 @@ Responsive, component-based UI built for clarity, usability, and scalability.
 
 - npm / yarn
 
-- PostgreSQL or MySQL
+- PostgreSQL or SQLite
 
 ### Backend Setup
 
