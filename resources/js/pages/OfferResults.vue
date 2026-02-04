@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { usePage } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3';
+import { PageProps } from '@/types/inertia';
 
 interface Installment {
     id: number
@@ -27,95 +28,165 @@ interface Offer {
     bonusMalusClass: string
     commissionValue: number
     commissionPercent: number
-    directCompensation: DirectCompensation
+    directCompensation: DirectCompensation | null
     installments: Installment[]
     greenCardExclusions: string
     notes: string | null
     offerExpiryDate: string
-    pid: string
 }
 
 interface InsurerOffers {
-    insurer: string
+    insurer: string,
     offers: Offer[]
 }
 
-/**
- * Props from controller
- */
-const props = defineProps<{
+interface OfferResultsProps extends PageProps {
     offers: InsurerOffers[]
-}>()
+    errors?: string
+}
 
-/**
- * Inertia validation errors
- */
-const page = usePage()
+const page = usePage<OfferResultsProps>();
 
-const errors = computed<Record<string, string[]>>(() => {
-    return (page.props.errors ?? {}) as Record<string, string[]>
-})
+const offers = computed(() => page.props.offers ?? []);
+
+const insurers = {
+    "allianz": "Allianz",
+    "asirom": "Asirom",
+    "axeria": "Axeria",
+    "generali": "Generali",
+    "groupama": "Groupama",
+    "hellas_autonom": "Hellas Autonom",
+    "hellas_nextins": "Hellas Nextins",
+    "omniasig": "Omniasig",
+    "grawe": "Grawe",
+    "eazy_insure": "Easy Insure"
+};
+
+function goBack() {
+    router.get("/offers");
+}
 </script>
 
 <template>
-    <div>
-        <h1>Oferte RCA</h1>
-
-        <!-- Validation errors -->
-        <div v-if="Object.keys(errors).length" class="errors">
-            <p v-for="(msgs, field) in errors" :key="field">
-                <strong>{{ field }}:</strong>
-                {{ Array.isArray(msgs) ? msgs.join(', ') : msgs }}
-            </p>
-        </div>
-
-        <!-- Offers grouped by insurer -->
-        <div v-if="props.offers.length">
-            <div
-                v-for="insurerGroup in props.offers"
-                :key="insurerGroup.insurer"
-                class="insurer-block"
+    <div
+        class="min-h-screen bg-slate-900 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))]
+           from-slate-800 via-slate-900 to-slate-950 text-slate-200"
+    >
+        <header class="py-12 text-center">
+            <button
+                @click="goBack"
+                class="fixed absolute top-10 left-10 z-50 rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
+         hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
             >
-                <h2>{{ insurerGroup.insurer }}</h2>
+                ← Înapoi
+            </button>
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                Oferte <span class="text-green-500">RCA</span>
+            </h1>
+            <p class="mt-3 text-slate-400 font-medium">
+                Am găsit {{ offers.length }} oferte disponibile
+            </p>
+        </header>
 
-                <ul v-if="insurerGroup.offers.length">
-                    <li
-                        v-for="offer in insurerGroup.offers"
-                        :key="offer.offerId"
-                        class="offer-item"
-                    >
-                        <strong>Premium:</strong>
-                        {{ offer.premiumAmount }} {{ offer.currency }}
-                        |
-                        <strong>Start:</strong> {{ offer.startDate }}
-                        |
-                        <strong>End:</strong> {{ offer.endDate }}
-                    </li>
-                </ul>
+        <main class="max-w-5xl mx-auto px-6 pb-24 space-y-8">
+            <div
+                v-for="offer in offers"
+                :key="offer.offers.at(0)!.offerId"
+                class="relative overflow-hidden rounded-3xl bg-slate-900/50 backdrop-blur-xl
+               border border-slate-800 shadow-2xl p-8 transition hover:scale-[1.01]"
+            >
+                <!-- top glow line -->
+                <div class="absolute top-0 left-0 right-0 h-[1px]
+                    bg-gradient-to-r from-transparent via-green-500/50 to-transparent" />
 
-                <p v-else>No offers from this insurer.</p>
+                <!-- header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 class="text-green-400 text-3xl">
+                            {{insurers[offer.insurer as keyof typeof insurers]}}
+                        </h1>
+                        <h2 class="text-xl font-bold text-white">
+                            {{ offer.offers.at(0)!.providerOfferCode }}
+                        </h2>
+                        <p class="text-sm text-slate-400">
+                            Bonus-Malus: <span class="text-green-400">{{ offer.offers.at(0)!.bonusMalusClass }}</span>
+                        </p>
+                    </div>
+
+                    <div class="text-right">
+                        <div class="text-3xl font-black text-green-500">
+                            {{ offer.offers.at(0)!.premiumAmount }} {{ offer.offers.at(0)!.currency }}
+                        </div>
+                        <div class="text-xs text-slate-400">
+                            valabil până la {{ offer.offers.at(0)!.offerExpiryDate }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- details grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                    <div class="space-y-1">
+                        <p class="text-slate-500 uppercase text-xs tracking-widest">Perioadă</p>
+                        <p>{{ offer.offers.at(0)!.startDate }} → {{ offer.offers.at(0)!.endDate }}</p>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p class="text-slate-500 uppercase text-xs tracking-widest">Comision</p>
+                        <p>{{ offer.offers.at(0)!.commissionPercent }}% ({{ offer.offers.at(0)!.commissionValue }} {{ offer.offers.at(0)!.currency }})</p>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p class="text-slate-500 uppercase text-xs tracking-widest">Rata de referință</p>
+                        <p>{{ offer.offers.at(0)!.referenceRate }}</p>
+                    </div>
+                </div>
+
+                <!-- installments -->
+                <div v-if="offer.offers.at(0)!.installments?.length" class="mt-6">
+                    <details class="group">
+                        <summary class="cursor-pointer text-green-400 font-semibold">
+                            Vezi ratele
+                        </summary>
+
+                        <div class="mt-4 space-y-2">
+                            <div
+                                v-for="inst in offer.offers.at(0)!.installments"
+                                :key="inst.id"
+                                class="flex justify-between rounded-xl bg-slate-950/40
+                       border border-slate-800 px-5 py-3"
+                            >
+                                <span>{{ inst.dueDate }}</span>
+                                <span class="font-bold">{{ inst.amount }} {{ offer.offers.at(0)!.currency }}</span>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- footer -->
+                <div class="mt-6 w-full flex justify-between items-center">
+                    <!-- TODO handle descarca pdf -->
+                    <div>
+                        <button
+                            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
+                       hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
+                        >
+                            Descarcă PDF
+                        </button>
+                    </div>
+                    <!-- TODO handle transforma in polita -->
+                    <div>
+                        <button
+                            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
+                       hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
+                        >
+                            Transformă în Poliță
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <p v-else>No offers available.</p>
+        </main>
     </div>
 </template>
 
 <style scoped>
-.errors {
-    background: #ffe5e5;
-    color: #a00;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid #a00;
-    border-radius: 5px;
-}
-
-.insurer-block {
-    margin-bottom: 2rem;
-}
-
-.offer-item {
-    padding: 0.5rem 0;
-}
 </style>

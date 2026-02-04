@@ -25,7 +25,9 @@ Route::get("/offers", function () {
 Route::post('/offers', [OfferController::class, 'index'])->name('offers.index');
 
 Route::get("/offerResults", function() {
-    return Inertia::render("OfferResults");
+    // TODO this is flash data, store offers permanently in session in OfferController
+    $offers = session("offers");
+    return Inertia::render("OfferResults", ["offers" => $offers]);
 })->name("offerResults.page");
 
 Route::get('dashboard', function () {

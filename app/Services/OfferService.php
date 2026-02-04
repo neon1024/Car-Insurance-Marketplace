@@ -32,6 +32,8 @@ class OfferService
         try {
             $token = $this->rcaV2ApiService->getToken();
 
+            set_time_limit(60);
+
             $responses = Http::pool(function (Pool $pool) use ($requestData, $token) {
                     $offersData = [];
 
@@ -39,10 +41,9 @@ class OfferService
                         $payload = $requestData;
                         $payload["provider"]["organization"]["businessName"] = $insurer;
 
-                        $offersData[$insurer] = $pool->withoutVerifying()->withHeader("Token", $token)->timeout(3)->post(
-                            $this->rcaV2ApiService->getBaseUrl() . "/offer",
-                            $payload
-                        );
+                        $offersData[$insurer] = $pool->withoutVerifying()
+                            ->withHeader("Token", $token)
+                            ->post($this->rcaV2ApiService->getBaseUrl() . "/offer", $payload);
                     }
 
                     return $offersData;
@@ -86,7 +87,6 @@ class OfferService
                 }
             }
 
-            // TODO returns 5 but dd shows 3?
             return $offers;
         } catch(Exception $error) {
             throw $error;

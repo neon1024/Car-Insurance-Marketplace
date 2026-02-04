@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\OfferService;
 use Exception;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class OfferController extends Controller
@@ -80,7 +78,9 @@ class OfferController extends Controller
 
             $offersData = $this->offerService->getOffers($validated);
 
-            return Inertia::render("OfferResults", [
+            // TODO redirect and store $offers in session permanently
+//            return redirect()->route("offerResults.page")->with("offers", $offersData);
+            return Inertia::render('OfferResults', [
                 'offers' => $offersData,
             ]);
             // TODO handle

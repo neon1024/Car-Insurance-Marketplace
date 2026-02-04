@@ -207,7 +207,7 @@ const formData1 = ref({
 const formData2 = ref({
     "product": {
         "motor": {
-            "startDate": "2026-01-31",
+            "startDate": "2026-02-28",
             "termTime": 12
         },
         "policyholder": {
@@ -371,7 +371,7 @@ const validateFormData = () => {
 }
 
 // TODO re route in backend to login when token / session expires
-const handleGetOffers = () => {
+const handleGetOffers = async () => {
     router.post("/offers", formData2.value);
 
     return;
