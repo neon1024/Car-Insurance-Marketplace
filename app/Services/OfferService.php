@@ -92,4 +92,44 @@ class OfferService
             throw $error;
         }
     }
+
+    public function downloadOfferById($id) {
+        try {
+            $response = $this->rcaV2ApiService->get("/offer/" . $id);
+
+            $response_json = $response->json();
+
+            $error = $response_json["error"];
+            $status = $response_json["status"];
+
+            if($error) {
+                $message = $response_json["message"];
+
+                return response()->json([
+                    "error" => true,
+                    "status" => $status,
+                    "message" => $message
+                ], $status);
+            }
+
+            $data = $response_json["data"];
+
+            $file = $data["files"][0];
+            $fileType = $file["type"];
+            $fileName = $file["name"];
+            $fileContent = $file["content"];
+            $fileContentDecoded = base64_decode($fileContent);
+
+            return response($fileContentDecoded)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"')
+                ->header('Content-Length', strlen($fileContentDecoded));
+        } catch(Exception $error) {
+            return response()->json([
+                "error" => true,
+                "status" => 500,
+                "message" => $error->getMessage()
+            ], 500);
+        }
+    }
 }

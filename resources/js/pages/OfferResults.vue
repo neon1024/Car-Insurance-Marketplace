@@ -65,6 +65,7 @@ const insurers = {
 function goBack() {
     router.get("/offers");
 }
+
 </script>
 
 <template>
@@ -162,17 +163,17 @@ function goBack() {
                     </details>
                 </div>
 
-                <!-- footer -->
+                <!-- Offer actions -->
                 <div class="mt-6 w-full flex justify-between items-center">
-                    <!-- TODO handle descarca pdf -->
                     <div>
-                        <button
-                            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
-                       hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
+                        <a
+                            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950 hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
+                            :href="`/offers/${offer.offers.at(0)!.offerId}`"
                         >
-                            Descarcă PDF
-                        </button>
+                            Descarcă Oferta
+                        </a>
                     </div>
+
                     <!-- TODO handle transforma in polita -->
                     <div>
                         <button
@@ -180,6 +181,16 @@ function goBack() {
                        hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
                         >
                             Transformă în Poliță
+                        </button>
+                    </div>
+
+                    <!-- TODO handle download policy -->
+                    <div>
+                        <button
+                            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
+                       hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
+                        >
+                            Descarcă Polița
                         </button>
                     </div>
                 </div>

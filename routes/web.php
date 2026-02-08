@@ -24,6 +24,10 @@ Route::get("/offers", function () {
 
 Route::post('/offers', [OfferController::class, 'index'])->name('offers.index');
 
+Route::get("/offers/{id}", [OfferController::class, "downloadOffer"])->name('offers.download');
+
+// TODO how to assign a general route to a controller and define custom routes inside it?
+
 Route::get("/offerResults", function() {
     // TODO this is flash data, store offers permanently in session in OfferController
     $offers = session("offers");

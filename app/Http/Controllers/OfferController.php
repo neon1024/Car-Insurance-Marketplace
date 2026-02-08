@@ -91,4 +91,16 @@ class OfferController extends Controller
             ]);
         }
     }
+
+    public function downloadOffer() {
+        $offerId = request()->route()->parameter("id");
+
+        try {
+            $offer = $this->offerService->downloadOfferById($offerId);
+
+            return $offer;
+        } catch(Exception $error) {
+            return redirect()->back()->with("error", $error->getMessage());
+        }
+    }
 }
