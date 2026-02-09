@@ -103,4 +103,22 @@ class OfferController extends Controller
             return redirect()->back()->with("error", $error->getMessage());
         }
     }
+
+    public function downloadPolicy() {
+        $offerId = request()->route()->parameter("id");
+        $offerAmount = request()->query("amount");
+        $offerCurrency = request()->query("currency");
+        $offerDate = request()->query("date");
+
+        $offerData = [
+            "id" => $offerId,
+            "amount" => $offerAmount,
+            "currency" => $offerCurrency,
+            "date" => $offerDate
+        ];
+
+        $policy = $this->offerService->transformOfferIntoPolicy($offerData);
+
+        return $policy;
+    }
 }

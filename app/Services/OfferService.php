@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Client\Pool;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 
 class OfferService
@@ -124,6 +126,85 @@ class OfferService
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"')
                 ->header('Content-Length', strlen($fileContentDecoded));
+        } catch(Exception $error) {
+            return response()->json([
+                "error" => true,
+                "status" => 500,
+                "message" => $error->getMessage()
+            ], 500);
+        }
+    }
+
+    public function transformOfferIntoPolicy($offerData) {
+        try {
+            $offerId = $offerData["id"];
+            $offerAmount = $offerData["amount"];
+            $offerCurrency = $offerData["currency"];
+//            $offerDate = $offerData["date"];
+
+            $request_body = [
+                    "offerId" => $offerId,
+                    "includeDirectCompensation" => false,
+                    "payment" => [
+                        "method" => "payment order",
+                        "currency" => $offerCurrency,
+                        "amount" => $offerAmount,
+                        "date" => Carbon::now('Europe/Bucharest')->format('Y-m-d'),
+                        "documentNumber" => "AX4984"
+                    ],
+                    "additionalData" => [
+                        "product" => [
+                            "policyholder" => [
+                                "residency" => "resident in Romania",
+                                "politicallyExposed" => "no"
+                            ],
+                            "vehicle" => [
+                                "owner" => [
+                                    "residency" => "resident in Romania",
+                                    "politicallyExposed" => "no"
+                                ]
+                            ]
+                        ]
+                    ]
+            ];
+
+            set_time_limit(60);
+
+            $response = $this->rcaV2ApiService->post("/policy", $request_body);
+
+            $response_json = $response->json();
+
+            $error = $response_json["error"];
+            $status = $response_json["status"];
+
+            if($error) {
+                $message = $response_json["message"];
+
+                return response()->json([
+                    "error" => true,
+                    "status" => $status,
+                    "message" => $message
+                ], $status);
+            }
+
+            $data = $response_json["data"];
+
+            $policyId = $data["policies"][0]["policyId"];
+            $policySeries = $data["policies"][0]["series"];
+            $policyNumber = $data["policies"][0]["number"];
+
+            $policyPDFData = $this->rcaV2ApiService->get("/policy/" .  $policyId . "?series=" . $policySeries . "&number=" . $policyNumber);
+
+            $policyPDFData = $policyPDFData->json();
+
+            $policyPDFname = $policyPDFData["data"]["files"][0]["name"];
+            $policyPDF = $policyPDFData["data"]["files"][0]["content"];
+            $policyPDFDecoded = base64_decode($policyPDF);
+
+            return response($policyPDFDecoded)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $policyPDFname . '"')
+                ->header('Content-Length', strlen($policyPDFDecoded));
         } catch(Exception $error) {
             return response()->json([
                 "error" => true,

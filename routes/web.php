@@ -26,6 +26,8 @@ Route::post('/offers', [OfferController::class, 'index'])->name('offers.index');
 
 Route::get("/offers/{id}", [OfferController::class, "downloadOffer"])->name('offers.download');
 
+Route::get("/offers/{id}/policies", [OfferController::class, "downloadPolicy"])->name("policies.download");
+
 // TODO how to assign a general route to a controller and define custom routes inside it?
 
 Route::get("/offerResults", function() {

@@ -167,8 +167,8 @@ function goBack() {
                 <div class="mt-6 w-full flex justify-between items-center">
                     <div>
                         <a
-                            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950 hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
                             :href="`/offers/${offer.offers.at(0)!.offerId}`"
+                            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950 hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
                         >
                             Descarcă Oferta
                         </a>
@@ -176,22 +176,13 @@ function goBack() {
 
                     <!-- TODO handle transforma in polita -->
                     <div>
-                        <button
+                        <a
+                            :href="`/offers/${offer.offers.at(0)!.offerId}/policies?amount=${offer.offers.at(0)!.premiumAmount}&currency=${offer.offers.at(0)!.currency}&date=${offer.offers.at(0)!.startDate}`"
                             class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
                        hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
                         >
-                            Transformă în Poliță
-                        </button>
-                    </div>
-
-                    <!-- TODO handle download policy -->
-                    <div>
-                        <button
-                            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
-                       hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
-                        >
-                            Descarcă Polița
-                        </button>
+                            Transformă în Poliță & Descarcă
+                        </a>
                     </div>
                 </div>
             </div>
