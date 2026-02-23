@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { PageProps } from '@/types/inertia';
+import axios from 'axios';
 
 interface Installment {
     id: number
@@ -62,8 +63,67 @@ const insurers = {
     "eazy_insure": "Easy Insure"
 };
 
+const isLoading = ref(false);
+const isPolicyChosen = ref(false);
+
 function goBack() {
     router.get("/offers");
+}
+
+const handleDownloadOffer = async (offerId: number) => {
+    try {
+        isLoading.value = true;
+
+        const response = await axios.get(`/offers/${offerId}`, {
+            responseType: "blob",
+        });
+
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `offer-${offerId}.pdf`; // adjust if needed
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+        console.error("Download failed:", error);
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const handleDownloadPolicy = async (offerId: number, premiumAmount: number, currency: string, startDate: string) => {
+    try {
+        isLoading.value = true;
+
+        const response = await axios.get(`/offers/${offerId}/policies?amount=${premiumAmount}&currency=${currency}&date=${startDate}`, {
+            responseType: "blob",
+        });
+
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `offer-${offerId}.pdf`; // adjust if needed
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        isPolicyChosen.value = true;
+
+    } catch (error) {
+        console.error("Download failed:", error);
+    } finally {
+        isLoading.value = false;
+    }
 }
 
 </script>
@@ -166,23 +226,29 @@ function goBack() {
                 <!-- Offer actions -->
                 <div class="mt-6 w-full flex justify-between items-center">
                     <div>
-                        <a
-                            :href="`/offers/${offer.offers.at(0)!.offerId}`"
+                        <button
+                            :disabled="isLoading"
+                            @click="handleDownloadOffer(offer.offers.at(0)!.offerId)"
                             class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950 hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
                         >
                             Descarcă Oferta
-                        </a>
+                        </button>
                     </div>
 
-                    <!-- TODO handle transforma in polita -->
                     <div>
-                        <a
-                            :href="`/offers/${offer.offers.at(0)!.offerId}/policies?amount=${offer.offers.at(0)!.premiumAmount}&currency=${offer.offers.at(0)!.currency}&date=${offer.offers.at(0)!.startDate}`"
+                        <button
+                            :disabled="isLoading || isPolicyChosen"
+                            @click="handleDownloadPolicy(
+                                offer.offers.at(0)!.offerId,
+                                offer.offers.at(0)!.premiumAmount,
+                                offer.offers.at(0)!.currency,
+                                offer.offers.at(0)!.startDate)
+                            "
                             class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
                        hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
                         >
                             Transformă în Poliță & Descarcă
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -191,4 +257,7 @@ function goBack() {
 </template>
 
 <style scoped>
+button:disabled {
+    background-color: #199355;
+}
 </style>

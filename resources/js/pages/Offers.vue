@@ -13,6 +13,8 @@ const citiesVehicleOwner = ref<Array<{ siruta: string, name: string }>>([]);
 const isNaturalPersonPolicyHolder = ref(false);
 const isNaturalPersonVehicleOwner = ref(false);
 
+const isLoading = ref(false);
+
 const snackbarVisible = ref(false);
 const snackbarText = ref("");
 
@@ -370,9 +372,15 @@ const validateFormData = () => {
     return true;
 }
 
-// TODO re route in backend to login when token / session expires
 const handleGetOffers = async () => {
-    router.post("/offers", formData2.value);
+    router.post("/offers", formData2.value, {
+        onStart: () => {
+            isLoading.value = true;
+        },
+        onFinish: () => {
+            isLoading.value = false;
+        }
+    });
 
     return;
 
@@ -522,7 +530,6 @@ getCounties();
 
 watch(() => formData.value.policyHolderCountyCode, async () => getCitiesByCountyCode(citiesPolicyHolder, formData.value.policyHolderCountyCode));
 watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCountyCode(citiesVehicleOwner, formData.value.vehicleOwnerCountyCode));
-
 </script>
 
 <template>
@@ -813,7 +820,7 @@ watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCounty
                     </label>
 
                     <div class="pt-8">
-                        <button type="submit" class="relative group w-full overflow-hidden rounded-2xl bg-green-500 px-8 py-6 text-xl font-black text-slate-950 transition-all hover:bg-green-400 hover:scale-[1.01] active:scale-[0.98] shadow-[0_0_50px_rgba(34,197,94,0.3)]">
+                        <button :disabled="isLoading" type="submit" class="relative group w-full overflow-hidden rounded-2xl bg-green-500 px-8 py-6 text-xl font-black text-slate-950 transition-all hover:bg-green-400 hover:scale-[1.01] active:scale-[0.98] shadow-[0_0_50px_rgba(34,197,94,0.3)]">
                             <div class="relative z-10 flex items-center justify-center gap-3">
                                 <span>OBȚINE OFERTE</span>
                                 <svg class="w-7 h-7 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
@@ -834,5 +841,7 @@ watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCounty
 </template>
 
 <style scoped>
-
+button:disabled {
+    background-color: #199355;
+}
 </style>
