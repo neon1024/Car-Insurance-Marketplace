@@ -4,6 +4,7 @@ import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 import Snackbar from '@/components/Snackbar.vue';
+import Spinner from '@/components/Spinner.vue';
 
 const counties = ref<Array<{ code: string; name: string }>>([]);
 
@@ -373,6 +374,14 @@ const validateFormData = () => {
 }
 
 const handleGetOffers = async () => {
+    // TODO email is mandatory
+    // TODO check if email already exists for a user in db
+    // TODO if email already exists -> prompt user to insert its password
+    // TODO if email doesn't exist -> prompt user to create a password
+    // TODO password -> login or register
+    // TODO on register -> send notification mail about account creation
+    // TODO after login / register -> continue with the offerscls
+
     router.post("/offers", formData2.value, {
         onStart: () => {
             isLoading.value = true;
@@ -830,6 +839,8 @@ watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCounty
                 </div>
             </form>
         </main>
+
+        <Spinner :visible="isLoading"/>
 
         <Snackbar
             :visible="snackbarVisible"

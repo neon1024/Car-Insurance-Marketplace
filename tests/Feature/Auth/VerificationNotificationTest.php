@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\User;
+use App\Models\UserDefault;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -16,7 +16,7 @@ class VerificationNotificationTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->unverified()->create();
+        $user = UserDefault::factory()->unverified()->create();
 
         $this->actingAs($user)
             ->post(route('verification.send'))
@@ -29,7 +29,7 @@ class VerificationNotificationTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = UserDefault::factory()->create();
 
         $this->actingAs($user)
             ->post(route('verification.send'))
