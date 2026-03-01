@@ -5,6 +5,7 @@ import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 import Snackbar from '@/components/Snackbar.vue';
 import Spinner from '@/components/Spinner.vue';
+import PasswordPromptModal from '@/components/PasswordPromptModal.vue';
 
 const counties = ref<Array<{ code: string; name: string }>>([]);
 
@@ -373,11 +374,73 @@ const validateFormData = () => {
     return true;
 }
 
+const checkIfUserExistsByEmail = async () => {
+    try {
+        const response = await axios.get("/check-user", {
+            params: {
+                email: formData2.value.product.policyholder.email
+            }
+        });
+
+        const data = response.data;
+
+        const error = data.error;
+
+        if(error) {
+            const status = data.status;
+            const message = data.message;
+
+            console.log(status);
+            console.log(message);
+
+            return false;
+        }
+
+        return data.data;
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+const userExists = ref(false);
+
+const showPasswordPromptModal = ref(false);
+
+const handleSubmitPassword = (password: string) => {
+    alert(password);
+    showPasswordPromptModal.value = false;
+}
+
+const checkIfUserExists = async () => {
+    return await checkIfUserExistsByEmail();
+}
+
 const handleGetOffers = async () => {
-    // TODO email is mandatory
-    // TODO check if email already exists for a user in db
-    // TODO if email already exists -> prompt user to insert its password
-    // TODO if email doesn't exist -> prompt user to create a password
+    isLoading.value = true;
+
+    // email is mandatory
+    if(!formData2.value.product.policyholder.email ||
+        formData2.value.product.policyholder.email == "")
+    {
+        snackbarText.value = "Email-ul este obligatoriu!";
+        snackbarVisible.value = true;
+
+        isLoading.value = false;
+
+        return;
+    }
+
+    // check if a user already exists with the provided email
+    userExists.value = await checkIfUserExists();
+
+    // TODO if user already exists -> prompt user to insert its password
+    // if user doesn't exist -> prompt user to create a password
+    showPasswordPromptModal.value = true;
+
+    isLoading.value = false;
+
+    return;
+    
     // TODO password -> login or register
     // TODO on register -> send notification mail about account creation
     // TODO after login / register -> continue with the offerscls
@@ -493,7 +556,6 @@ const getCounties = async () => {
             const status = data.status;
             const message = data.message;
 
-            console.log("error", error);
             console.log("status", status);
             console.log("message", message);
 
@@ -839,6 +901,13 @@ watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCounty
                 </div>
             </form>
         </main>
+
+        <PasswordPromptModal
+            :visible="showPasswordPromptModal"
+            :userExists="userExists"
+            @submit="password => handleSubmitPassword(password)"
+            @cancel="showPasswordPromptModal = false"
+        />
 
         <Spinner :visible="isLoading"/>
 

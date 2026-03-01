@@ -2,20 +2,26 @@
 
 namespace App\Models;
 
-class User
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
 {
     protected $fillable = [
-//        'first_name',
-//        'last_name',
         'email',
         'password',
-//        'phone',
-//        'role',
-//        'is_active',
     ];
 
     protected $hidden = [
         'password',
-//        'remember_token',
     ];
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class);
+    }
+
+    public function policies()
+    {
+        return $this->hasMany(Policy::class);
+    }
 }

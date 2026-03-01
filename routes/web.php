@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -36,8 +37,10 @@ Route::get("/offerResults", function() {
     return Inertia::render("OfferResults", ["offers" => $offers]);
 })->name("offerResults.page");
 
-Route::get('dashboard', function () {
+Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get("/check-user", [UserController::class, "checkIfUserExistsByEmail"])->name("user.check-if-exists-by-email");
 
 require __DIR__.'/settings.php';

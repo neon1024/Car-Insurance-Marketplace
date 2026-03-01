@@ -10,7 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class UserDefault extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<\Database\Factories\UserDefaultFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
