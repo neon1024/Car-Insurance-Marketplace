@@ -5,5 +5,6 @@ export interface PageProps extends InertiaPageProps {
         token: string | null
         token_expires_at: string | null
         refresh_token: string | null
+        user_id: string | null
     }
 }

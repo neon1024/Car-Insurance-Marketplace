@@ -26,7 +26,8 @@ class AppServiceProvider extends ServiceProvider
                 return [
                     "token" => session("auth_token"),
                     "token_expires_at" => session("auth_token_expires_at"),
-                    "refresh_token" => session("refresh_auth_token")
+                    "refresh_token" => session("refresh_auth_token"),
+                    "user_id" => session("user_id")
                 ];
             }
         ]);

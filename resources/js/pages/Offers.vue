@@ -1,11 +1,16 @@
 <script setup lang="ts">
 
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 import Snackbar from '@/components/Snackbar.vue';
 import Spinner from '@/components/Spinner.vue';
 import PasswordPromptModal from '@/components/PasswordPromptModal.vue';
+import { PageProps } from '@/types/inertia';
+
+const page = usePage<PageProps>();
+
+const userId = ref(page.props.session.user_id);
 
 const counties = ref<Array<{ code: string; name: string }>>([]);
 
@@ -211,7 +216,7 @@ const formData1 = ref({
 const formData2 = ref({
     "product": {
         "motor": {
-            "startDate": "2026-02-28",
+            "startDate": "2026-03-28",
             "termTime": 12
         },
         "policyholder": {
@@ -376,7 +381,7 @@ const validateFormData = () => {
 
 const checkIfUserExistsByEmail = async () => {
     try {
-        const response = await axios.get("/check-user", {
+        const response = await axios.get("/user", {
             params: {
                 email: formData2.value.product.policyholder.email
             }
@@ -396,7 +401,7 @@ const checkIfUserExistsByEmail = async () => {
             return false;
         }
 
-        return data.data;
+        return !!data.data;
     } catch(error) {
         console.log(error);
     }
@@ -406,13 +411,124 @@ const userExists = ref(false);
 
 const showPasswordPromptModal = ref(false);
 
-const handleSubmitPassword = (password: string) => {
-    alert(password);
-    showPasswordPromptModal.value = false;
+const loginUser = async (password: string) => {
+    try {
+        isLoading.value = true;
+
+        const response = await axios.post("/user/login", {
+            email: formData2.value.product.policyholder.email,
+            password: password
+        })
+
+        const data = response.data;
+
+        const error = data.error;
+
+        if(error) {
+            const status = data.status;
+            const message = data.message;
+
+            console.log(status);
+            console.log(message);
+
+            return false;
+        }
+
+        userId.value = data.data;
+
+        return true;
+    } catch(error) {
+        console.log(error);
+    } finally {
+        isLoading.value = false;
+    }
+}
+
+const createUser = async (password: string) => {
+    try {
+        isLoading.value = true;
+
+        const response = await axios.post("/user/create", {
+            email: formData2.value.product.policyholder.email,
+            password: password
+        })
+
+        const data = response.data;
+
+        const error = data.error;
+
+        if(error) {
+            const status = data.status;
+            const message = data.message;
+
+            console.log(status);
+            console.log(message);
+
+            return false;
+        }
+
+        return true;
+    } catch(error) {
+        console.log(error);
+    } finally {
+        isLoading.value = false;
+    }
+}
+
+const logoutUser = async () => {
+    try {
+        isLoading.value = true;
+
+        const response = await axios.delete("/user");
+
+        const data = response.data;
+
+        userId.value = null;
+
+        console.log(data);
+    } catch(error) {
+        console.log(error);
+    } finally {
+        isLoading.value = false;
+    }
+}
+
+const handleSubmitPassword = async (password: string) => {
+    let result;
+
+    isLoading.value = true;
+
+    // check if a user already exists with the provided email
+    userExists.value = await checkIfUserExists() ?? false;
+
+    if(userExists.value) {
+        // if user already exists -> login user
+        result = await loginUser(password) ?? false;
+    } else {
+        // if new user -> create user
+        result = await createUser(password) ?? false;
+    }
+
+    isLoading.value = false;
+
+    // display auth results
+    if(result) {
+        snackbarText.value = "Autentificare reusita!";
+
+        showPasswordPromptModal.value = false;
+    } else {
+        snackbarText.value = "Eroare la autentificare!";
+    }
+
+    snackbarVisible.value = true;
 }
 
 const checkIfUserExists = async () => {
     return await checkIfUserExistsByEmail();
+}
+
+const checkIfUserIsLoggedIn = () => {
+    return userId.value != null && userId.value != "";
 }
 
 const handleGetOffers = async () => {
@@ -430,29 +546,31 @@ const handleGetOffers = async () => {
         return;
     }
 
-    // check if a user already exists with the provided email
-    userExists.value = await checkIfUserExists();
+    // check if user is already logged in
+    if(!checkIfUserIsLoggedIn()) {
+        // user is not logged in
 
-    // TODO if user already exists -> prompt user to insert its password
-    // if user doesn't exist -> prompt user to create a password
-    showPasswordPromptModal.value = true;
+        // if user already exists -> prompt user to insert its password
+        // if user doesn't exist -> prompt user to create a password
+        isLoading.value = false;
+        showPasswordPromptModal.value = true;
+    } else {
+        // user is already logged in
 
-    isLoading.value = false;
+        // proceed with generating the offers
+        router.post("/offers", formData2.value, {
+            onStart: () => {
+                isLoading.value = true;
+            },
+            onFinish: () => {
+                isLoading.value = false;
+            }
+        });
+    }
 
-    return;
-    
     // TODO password -> login or register
     // TODO on register -> send notification mail about account creation
     // TODO after login / register -> continue with the offerscls
-
-    router.post("/offers", formData2.value, {
-        onStart: () => {
-            isLoading.value = true;
-        },
-        onFinish: () => {
-            isLoading.value = false;
-        }
-    });
 
     return;
 
@@ -599,11 +717,43 @@ const getCitiesByCountyCode = async (cities, countyCode) => {
 
 getCounties();
 
+function goBack() {
+    router.get("/");
+}
+
 watch(() => formData.value.policyHolderCountyCode, async () => getCitiesByCountyCode(citiesPolicyHolder, formData.value.policyHolderCountyCode));
 watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCountyCode(citiesVehicleOwner, formData.value.vehicleOwnerCountyCode));
 </script>
 
 <template>
+    <header class="flex justify-between items-center py-12 px-10 text-center relative bg-slate-900/50 backdrop-blur-xl border border-slate-800 shadow-2xl">
+        <button
+            @click="goBack"
+            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
+               hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
+        >
+            ← Înapoi
+        </button>
+
+        <button
+            @click="logoutUser"
+            v-if="checkIfUserIsLoggedIn()"
+            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
+               hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
+        >
+            Logout
+        </button>
+
+        <button
+            @click="() => showPasswordPromptModal = true"
+            v-if="!checkIfUserIsLoggedIn()"
+            class="rounded-2xl bg-green-500 px-8 py-4 font-black text-slate-950
+               hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
+        >
+            Login
+        </button>
+    </header>
+
     <div class="min-h-screen bg-slate-900 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-slate-950 text-slate-200">
         <header class="py-12 text-center">
             <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
@@ -612,7 +762,6 @@ watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCounty
             <p class="mt-3 text-slate-400 font-medium">Completează datele de mai jos pentru a obține instant oferte de asigurare RCA</p>
         </header>
 
-        <!-- TODO remove novalidate -->
         <main class="max-w-4xl mx-auto px-6 pb-24">
             <form novalidate @submit.prevent="handleGetOffers" class="relative overflow-hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl">
 
@@ -905,7 +1054,7 @@ watch(() => formData.value.vehicleOwnerCountyCode, async () => getCitiesByCounty
         <PasswordPromptModal
             :visible="showPasswordPromptModal"
             :userExists="userExists"
-            @submit="password => handleSubmitPassword(password)"
+            @submit="async (password) => await handleSubmitPassword(password)"
             @cancel="showPasswordPromptModal = false"
         />
 

@@ -13,8 +13,6 @@ Route::get("/", function () {
     return Inertia::render("Home");
 })->name("home.page");
 
-// TODO user auth
-
 Route::get("/login", function () {
     return Inertia::render("Login");
 })->name("login.page");
@@ -41,6 +39,13 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get("/check-user", [UserController::class, "checkIfUserExistsByEmail"])->name("user.check-if-exists-by-email");
+// User
+Route::get("/user", [UserController::class, "checkIfUserExistsByEmail"])->name("user.check-if-exists-by-email");
+
+Route::post("/user/create", [UserController::class, "createNewUser"])->name("user.create");
+
+Route::post("/user/login", [UserController::class, "loginUser"])->name("user.login");
+
+Route::delete("/user", [UserController::class, "logoutUser"])->name("user.logout");
 
 require __DIR__.'/settings.php';
