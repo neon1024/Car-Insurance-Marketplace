@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { PageProps } from '@/types/inertia';
 import axios from 'axios';
+import Spinner from '@/components/Spinner.vue';
 
 interface Installment {
     id: number
@@ -254,6 +255,8 @@ const handleDownloadPolicy = async (offerId: number, premiumAmount: number, curr
             </div>
         </main>
     </div>
+
+    <Spinner :visible="isLoading"/>
 </template>
 
 <style scoped>
