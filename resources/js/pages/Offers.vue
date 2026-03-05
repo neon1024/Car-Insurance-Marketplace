@@ -228,7 +228,7 @@ const formData2 = ref({
             "citizenship": "RO",
             "gender": "m",
             "birthdate": "1962-06-07",
-            "email": "comenzi1769157661@roviniete.ro",
+            "email": "robertscumnpu@gmail.com",
             "mobileNumber": "0717691576",
             "identification": {
                 "idType": "CI",
@@ -535,9 +535,7 @@ const handleGetOffers = async () => {
     isLoading.value = true;
 
     // email is mandatory
-    if(!formData2.value.product.policyholder.email ||
-        formData2.value.product.policyholder.email == "")
-    {
+    if(!formData2.value.product.policyholder.email) {
         snackbarText.value = "Email-ul este obligatoriu!";
         snackbarVisible.value = true;
 

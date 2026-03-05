@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -47,5 +48,26 @@ Route::post("/user/create", [UserController::class, "createNewUser"])->name("use
 Route::post("/user/login", [UserController::class, "loginUser"])->name("user.login");
 
 Route::delete("/user", [UserController::class, "logoutUser"])->name("user.logout");
+
+// dev
+Route::get("/dev/user", function() {
+    $users = User::all();
+
+    return response()->json($users);
+})->name("dev.user.get");
+
+Route::get('/dev/user/delete/{id}', function($id) {
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
+    }
+
+    $user->delete();
+
+    session()->forget("user_id");
+
+    return response()->json(['message' => 'User deleted successfully']);
+})->name('dev.user.delete.id');
 
 require __DIR__.'/settings.php';

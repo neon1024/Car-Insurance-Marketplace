@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MailService;
 use App\Services\UserService;
 use Exception;
 
 class UserController extends Controller
 {
     private UserService $userService;
+    private MailService $mailService;
 
-    public function __construct(UserService $userService) {
+    public function __construct(
+        UserService $userService,
+        MailService $mailService
+    ) {
         $this->userService = $userService;
+        $this->mailService = $mailService;
     }
 
     public function checkIfUserExistsByEmail() {
@@ -50,6 +56,8 @@ class UserController extends Controller
             $password = $validated_request["password"];
 
             $this->userService->createNewUser($email, $password);
+
+            $this->mailService->sendAccountCreationSuccessMail($email, $password);
 
             return response()->json([
                 "error" => false,
