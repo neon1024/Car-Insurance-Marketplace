@@ -96,9 +96,15 @@ class OfferController extends Controller
         $offerId = request()->route()->parameter("id");
 
         try {
-            $offer = $this->offerService->downloadOfferById($offerId);
+            $result = $this->offerService->downloadOfferById($offerId);
 
-            return $offer;
+            $content = $result["content"];
+            $filename = $result["filename"];
+
+            return response($content)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+                ->header('Content-Length', strlen($content));
         } catch(Exception $error) {
             return redirect()->back()->with("error", $error->getMessage());
         }
@@ -117,8 +123,14 @@ class OfferController extends Controller
             "date" => $offerDate
         ];
 
-        $policy = $this->offerService->transformOfferIntoPolicy($offerData);
+        $result = $this->offerService->transformOfferIntoPolicy($offerData);
 
-        return $policy;
+        $content = $result["content"];
+        $filename = $result["filename"];
+
+        return response($content)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->header('Content-Length', strlen($content));
     }
 }

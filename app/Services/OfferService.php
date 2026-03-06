@@ -122,10 +122,10 @@ class OfferService
             $fileContent = $file["content"];
             $fileContentDecoded = base64_decode($fileContent);
 
-            return response($fileContentDecoded)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"')
-                ->header('Content-Length', strlen($fileContentDecoded));
+            return [
+                "content" => $fileContentDecoded,
+                "filename" => $fileName
+            ];
         } catch(Exception $error) {
             return response()->json([
                 "error" => true,
@@ -168,7 +168,7 @@ class OfferService
                     ]
             ];
 
-            set_time_limit(60);
+            set_time_limit(120);
 
             $response = $this->rcaV2ApiService->post("/policy", $request_body);
 
@@ -201,10 +201,10 @@ class OfferService
             $policyPDF = $policyPDFData["data"]["files"][0]["content"];
             $policyPDFDecoded = base64_decode($policyPDF);
 
-            return response($policyPDFDecoded)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="' . $policyPDFname . '"')
-                ->header('Content-Length', strlen($policyPDFDecoded));
+            return [
+                "content" => $policyPDFDecoded,
+                "filename" => $policyPDFname
+            ];
         } catch(Exception $error) {
             return response()->json([
                 "error" => true,
