@@ -34,7 +34,7 @@ class OfferService
         try {
             $token = $this->rcaV2ApiService->getToken();
 
-            set_time_limit(60);
+            set_time_limit(120);
 
             $responses = Http::pool(function (Pool $pool) use ($requestData, $token) {
                     $offersData = [];
